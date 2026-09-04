@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Platform</title>
+    <link rel="stylesheet" href="index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span>SuperAdmin</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-target="view-dashboard">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-target="view-organizations">
+                    <i class="fa-solid fa-building"></i>
+                    <span>Organizations</span>
+                </a>
+                <a href="#" class="nav-item" data-target="view-plans">
+                    <i class="fa-solid fa-tags"></i>
+                    <span>Plans & Packages</span>
+                </a>
+                <a href="#" class="nav-item" data-target="view-payments">
+                    <i class="fa-solid fa-credit-card"></i>
+                    <span>Payments</span>
+                </a>
+                <a href="#" class="nav-item" data-target="view-activity">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <span>Activity Log</span>
+                </a>
+                <a href="#" class="nav-item" data-target="view-settings">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="theme-toggle" id="theme-toggle-btn">
+                    <i class="fa-solid fa-moon dark-icon"></i>
+                    <i class="fa-solid fa-sun light-icon"></i>
+                    <span>Toggle Theme</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="topbar">
+                <div class="topbar-main-row">
+                    <div class="topbar-left">
+                        <h1 id="page-title">Dashboard</h1>
+                    </div>
+                    <div class="topbar-right">
+                        <div class="user-profile">
+                            <img src="https://i.pravatar.cc/150?img=11" alt="Super Admin" class="avatar">
+                            <div class="user-info">
+                                <span class="user-name">Root Admin</span>
+                                <span class="user-role">Superuser <span style="color:red; font-size: 11px;">| Logout</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard View -->
+            <section id="view-dashboard" class="view-section active">
+                <div class="stats-grid">
+                    <div class="stat-card gradient-1">
+                        <div class="stat-info">
+                            <h3>Total Organizations</h3>
+                            <p class="stat-value">124</p>
+                        </div>
+                        <i class="fa-solid fa-building stat-icon"></i>
+                    </div>
+                    <div class="stat-card gradient-2">
+                        <div class="stat-info">
+                            <h3>Active Subscriptions</h3>
+                            <p class="stat-value">118</p>
+                        </div>
+                        <i class="fa-solid fa-check-circle stat-icon"></i>
+                    </div>
+                    <div class="stat-card gradient-3">
+                        <div class="stat-info">
+                            <h3>Monthly Revenue</h3>
+                            <p class="stat-value">₹450,000</p>
+                        </div>
+                        <i class="fa-solid fa-wallet stat-icon"></i>
+                    </div>
+                </div>
+
+                <div class="dashboard-widgets">
+                    <div class="widget">
+                        <h2>Recent Organizations</h2>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Organization Name</th>
+                                    <th>Plan</th>
+                                    <th>Status</th>
+                                    <th>Joined Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>ABC Company</td>
+                                    <td>Professional</td>
+                                    <td><span class="badge badge-success">Active</span></td>
+                                    <td>2026-07-28</td>
+                                </tr>
+                                <tr>
+                                    <td>Tech Nova</td>
+                                    <td>Enterprise</td>
+                                    <td><span class="badge badge-success">Active</span></td>
+                                    <td>2026-07-25</td>
+                                </tr>
+                                <tr>
+                                    <td>Startup Hub</td>
+                                    <td>Starter</td>
+                                    <td><span class="badge badge-warning">Expiring</span></td>
+                                    <td>2026-07-20</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Organizations View -->
+            <section id="view-organizations" class="view-section">
+                <div class="view-header">
+                    <h2>Manage Organizations</h2>
+                    <button class="btn btn-primary" id="btn-add-org"><i class="fa-solid fa-plus"></i> Add Organization</button>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table" id="orgs-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Plan</th>
+                                <th>Modules Enabled</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dynamic Content -->
+                            <tr>
+                                <td>ABC Company</td>
+                                <td>Professional</td>
+                                <td>
+                                    <div class="module-toggles">
+                                        <label class="toggle"><input type="checkbox" checked> <span class="slider"></span> <span class="toggle-label">CRM</span></label>
+                                        <label class="toggle"><input type="checkbox" checked> <span class="slider"></span> <span class="toggle-label">LMS</span></label>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-success">Active</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon btn-edit"><i class="fa-solid fa-pen"></i></button>
+                                        <button class="btn-icon btn-suspend"><i class="fa-solid fa-ban"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>SalesForce Pro</td>
+                                <td>Starter</td>
+                                <td>
+                                    <div class="module-toggles">
+                                        <label class="toggle"><input type="checkbox" checked> <span class="slider"></span> <span class="toggle-label">CRM</span></label>
+                                        <label class="toggle"><input type="checkbox"> <span class="slider"></span> <span class="toggle-label">LMS</span></label>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-success">Active</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon btn-edit"><i class="fa-solid fa-pen"></i></button>
+                                        <button class="btn-icon btn-suspend"><i class="fa-solid fa-ban"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>LearnFast Academy</td>
+                                <td>Professional</td>
+                                <td>
+                                    <div class="module-toggles">
+                                        <label class="toggle"><input type="checkbox"> <span class="slider"></span> <span class="toggle-label">CRM</span></label>
+                                        <label class="toggle"><input type="checkbox" checked> <span class="slider"></span> <span class="toggle-label">LMS</span></label>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-danger">Suspended</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon btn-edit"><i class="fa-solid fa-pen"></i></button>
+                                        <button class="btn-icon btn-activate"><i class="fa-solid fa-check"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Plans View -->
+            <section id="view-plans" class="view-section">
+                 <div class="view-header">
+                    <h2>Subscription Plans</h2>
+                    <button class="btn btn-primary"><i class="fa-solid fa-plus"></i> Create Plan</button>
+                </div>
+                <div class="plans-grid">
+                    <div class="plan-card">
+                        <h3>Starter</h3>
+                        <div class="plan-price">₹1,999<span>/mo</span></div>
+                        <ul class="plan-features">
+                            <li><i class="fa-solid fa-check"></i> CRM Module</li>
+                            <li><i class="fa-solid fa-xmark"></i> LMS Module</li>
+                            <li><i class="fa-solid fa-check"></i> Up to 10 Users</li>
+                        </ul>
+                        <button class="btn btn-outline">Edit Plan</button>
+                    </div>
+                    <div class="plan-card premium">
+                        <h3>Professional</h3>
+                        <div class="plan-price">₹4,999<span>/mo</span></div>
+                        <ul class="plan-features">
+                            <li><i class="fa-solid fa-check"></i> CRM Module</li>
+                            <li><i class="fa-solid fa-check"></i> LMS Module</li>
+                            <li><i class="fa-solid fa-check"></i> Up to 50 Users</li>
+                        </ul>
+                        <button class="btn btn-primary">Edit Plan</button>
+                    </div>
+                    <div class="plan-card">
+                        <h3>Enterprise</h3>
+                        <div class="plan-price">Custom</div>
+                        <ul class="plan-features">
+                            <li><i class="fa-solid fa-check"></i> All Modules Included</li>
+                            <li><i class="fa-solid fa-check"></i> Unlimited Users</li>
+                            <li><i class="fa-solid fa-check"></i> Dedicated Support</li>
+                        </ul>
+                        <button class="btn btn-outline">Edit Plan</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Payments View -->
+            <section id="view-payments" class="view-section">
+                 <div class="view-header">
+                    <h2>Payment History</h2>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Invoice ID</th>
+                                <th>Organization</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>INV-2026-001</td>
+                                <td>ABC Company</td>
+                                <td>₹4,999</td>
+                                <td>2026-07-28</td>
+                                <td><span class="badge badge-success">Paid</span></td>
+                                <td><button class="btn-icon"><i class="fa-solid fa-download"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td>INV-2026-002</td>
+                                <td>SalesForce Pro</td>
+                                <td>₹1,999</td>
+                                <td>2026-07-27</td>
+                                <td><span class="badge badge-success">Paid</span></td>
+                                <td><button class="btn-icon"><i class="fa-solid fa-download"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td>INV-2026-003</td>
+                                <td>LearnFast Academy</td>
+                                <td>₹4,999</td>
+                                <td>2026-07-15</td>
+                                <td><span class="badge badge-danger">Overdue</span></td>
+                                <td><button class="btn-icon"><i class="fa-solid fa-bell"></i></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Activity Log View -->
+            <section id="view-activity" class="view-section">
+                <div class="view-header">
+                    <h2>System Activity Log</h2>
+                </div>
+                <div class="activity-timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-icon bg-blue"><i class="fa-solid fa-building"></i></div>
+                        <div class="timeline-content">
+                            <h4>New Organization Added</h4>
+                            <p>Super Admin added "ABC Company" and assigned Professional Plan.</p>
+                            <span class="time">2 hours ago</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon bg-green"><i class="fa-solid fa-credit-card"></i></div>
+                        <div class="timeline-content">
+                            <h4>Payment Received</h4>
+                            <p>Payment of ₹4,999 received from ABC Company.</p>
+                            <span class="time">3 hours ago</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon bg-yellow"><i class="fa-solid fa-toggle-off"></i></div>
+                        <div class="timeline-content">
+                            <h4>Module Toggled</h4>
+                            <p>Super Admin toggled LMS Module OFF for "SalesForce Pro".</p>
+                            <span class="time">1 day ago</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon bg-red"><i class="fa-solid fa-ban"></i></div>
+                        <div class="timeline-content">
+                            <h4>Account Suspended</h4>
+                            <p>Super Admin suspended "LearnFast Academy" due to overdue payments.</p>
+                            <span class="time">2 days ago</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Settings View -->
+            <section id="view-settings" class="view-section">
+                <div class="view-header">
+                    <h2>Platform Settings</h2>
+                </div>
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label>Platform Name</label>
+                        <input type="text" class="form-control" value="SaaS Master Platform">
+                    </div>
+                    <div class="form-group">
+                        <label>Support Email</label>
+                        <input type="email" class="form-control" value="support@platform.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <select class="form-control">
+                            <option>INR (₹)</option>
+                            <option>USD ($)</option>
+                            <option>EUR (€)</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary">Save Settings</button>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="modal-add-org">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Organization</h3>
+                <button class="btn-close" id="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Organization Name</label>
+                    <input type="text" class="form-control" placeholder="Enter company name">
+                </div>
+                <div class="form-group">
+                    <label>Admin Email</label>
+                    <input type="email" class="form-control" placeholder="admin@company.com">
+                </div>
+                <div class="form-group">
+                    <label>Assign Plan</label>
+                    <select class="form-control">
+                        <option>Starter</option>
+                        <option>Professional</option>
+                        <option>Enterprise</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="btn-cancel-modal">Cancel</button>
+                <button class="btn btn-primary">Create Organization</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
