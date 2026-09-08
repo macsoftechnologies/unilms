@@ -1,4 +1,4 @@
-<?= $this->extend('lms/layout') ?>
+<?= $this->extend('lms/career/layout') ?>
 
 <?= $this->section('page_title') ?>
 Watch - <?= esc($course['title']) ?>
@@ -10,8 +10,8 @@ Watch - <?= esc($course['title']) ?>
     <div style="margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
         <div>
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                <a href="<?= base_url('lms/materials') ?>" class="btn btn-sm btn-outline" style="padding: 5px 12px; font-size: 12px; border-radius: 8px;">
-                    <i class="fa-solid fa-arrow-left me-1"></i> Back to Materials
+                <a href="<?= base_url('lms/learn') ?>" class="btn btn-sm btn-outline" style="padding: 5px 12px; font-size: 12px; border-radius: 8px;">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Back to LMS Cloud
                 </a>
                 <span class="badge" style="background: rgba(99, 102, 241, 0.1); color: var(--primary); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px;">
                     <?= esc($course['category'] ?? 'Computer Science') ?>
@@ -85,7 +85,7 @@ Watch - <?= esc($course['title']) ?>
                             <div>
                                 <?php foreach ($ch['lessons'] as $les): ?>
                                     <?php $isActive = ($activeLesson && $activeLesson['id'] == $les['id']); ?>
-                                    <a href="<?= base_url('lms/materials/watch/' . $course['id'] . '?lesson=' . $les['id']) ?>" 
+                                    <a href="<?= base_url('lms/materials/watch/' . ($course['uuid'] ?? $course['id']) . '?lesson=' . ($les['uuid'] ?? $les['id'])) ?>" 
                                        style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; text-decoration: none; font-size: 12px; border-bottom: 1px solid var(--border); background: <?= $isActive ? 'rgba(99, 102, 241, 0.08)' : 'transparent' ?>; color: <?= $isActive ? 'var(--primary)' : 'var(--text-main)' ?>; font-weight: <?= $isActive ? '700' : '400' ?>; transition: all 0.15s ease;">
                                         <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
                                             <i class="fa-solid <?= $isActive ? 'fa-circle-play text-primary' : 'fa-play' ?>" style="font-size: 11px; flex-shrink: 0; color: <?= $isActive ? 'var(--primary)' : 'var(--text-muted)' ?>;"></i>

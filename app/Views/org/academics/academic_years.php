@@ -35,7 +35,7 @@
                     <td>
                         <div class="action-buttons">
                             <button class="btn-icon" onclick='editAy(<?= json_encode($ay) ?>)'><i class="fa-solid fa-pen"></i></button>
-                            <a href="<?= base_url('org/academics/academic_years/delete/'.$ay['id']) ?>" class="btn-icon text-danger" onclick="return confirm('Are you sure you want to delete this year? Blocks if cohorts exist.')"><i class="fa-solid fa-trash"></i></a>
+                            <a href="<?= base_url('org/academics/academic_years/delete/' . ($ay['uuid'] ?? $ay['id'])) ?>" class="btn-icon text-danger" onclick="return confirm('Are you sure you want to delete this year? Blocks if cohorts exist.')"><i class="fa-solid fa-trash"></i></a>
                         </div>
                     </td>
                 </tr>

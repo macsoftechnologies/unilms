@@ -45,7 +45,7 @@
             <tbody>
                 <?php if(!empty($employees)): foreach($employees as $e): ?>
                 <tr>
-                    <td><span class="badge" style="background: rgba(79, 70, 229, 0.1); color: #4f46e5; font-weight: 700;"><?= esc($e['employee_code'] ?? 'EMP-' . $e['id']) ?></span></td>
+                    <td><span class="badge" style="background: rgba(79, 70, 229, 0.1); color: #4f46e5; font-weight: 700;"><?= esc($e['employee_code'] ?? 'EMP-' . strtoupper(substr($e['uuid'] ?? $e['id'], 0, 8))) ?></span></td>
                     <td>
                         <strong><?= esc($e['full_name']) ?></strong>
                         <div style="font-size: 11px; color: var(--text-muted);"><?= esc($e['email']) ?></div>
@@ -67,7 +67,7 @@
                         </span>
                     </td>
                     <td>
-                        <button class="btn btn-outline" style="padding: 4px 10px; font-size: 12px;" onclick="viewPayslip('<?= esc($e['full_name']) ?>', '<?= esc($e['employee_code'] ?? 'EMP-'.$e['id']) ?>', '<?= esc($e['designation_name']) ?>', '<?= esc($e['department_name']) ?>', <?= $e['base_salary'] ?: 45000 ?>, '<?= esc($month) ?>')">
+                        <button class="btn btn-outline" style="padding: 4px 10px; font-size: 12px;" onclick="viewPayslip('<?= esc($e['full_name']) ?>', '<?= esc($e['employee_code'] ?? 'EMP-'.strtoupper(substr($e['uuid'] ?? $e['id'], 0, 8))) ?>', '<?= esc($e['designation_name']) ?>', '<?= esc($e['department_name']) ?>', <?= $e['base_salary'] ?: 45000 ?>, '<?= esc($month) ?>')">
                             <i class="fa-solid fa-file-invoice me-1"></i> View Payslip
                         </button>
                     </td>

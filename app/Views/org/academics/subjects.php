@@ -107,7 +107,7 @@ if (!empty($selected_program_id) && !empty($programs)) {
             </div>
 
             <div style="display: flex; gap: 10px;">
-                <a href="<?= base_url('org/academics/subjects?program_id=' . $prog['id']) ?>" class="btn btn-primary" style="flex: 1; background: #7C3AED; border: none; padding: 10px 14px; font-weight: 700; font-size: 13px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; color: #fff; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);">
+                <a href="<?= base_url('org/academics/subjects?program_id=' . ($prog['uuid'] ?? $prog['id'])) ?>" class="btn btn-primary" style="flex: 1; background: #7C3AED; border: none; padding: 10px 14px; font-weight: 700; font-size: 13px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; color: #fff; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);">
                     <i class="fa-solid fa-eye"></i> View & Manage Subjects
                 </a>
                 <button type="button" onclick="openModalForProgram(<?= $prog['id'] ?>)" class="btn btn-outline" title="Quick Add Subject" style="padding: 10px 14px; border-radius: 10px; font-weight: 700; border: 1px solid var(--border-color); background: var(--card-bg, #fff);">
@@ -253,7 +253,7 @@ if (!empty($selected_program_id) && !empty($programs)) {
                     <td style="padding: 14px 18px; text-align: right;">
                         <div class="action-buttons" style="display: inline-flex; gap: 6px; justify-content: flex-end;">
                             <button class="btn-icon" onclick='editSub(<?= json_encode($sub) ?>)' title="Edit Subject" style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: none; color: var(--text-primary); cursor: pointer;"><i class="fa-solid fa-pen"></i></button>
-                            <a href="<?= base_url('org/academics/subjects/delete/'.$sub['id']) ?>" class="btn-icon text-danger" onclick="return confirm('Are you sure you want to delete this subject?')" title="Delete Subject" style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: none; color: #DC2626; cursor: pointer;"><i class="fa-solid fa-trash"></i></a>
+                            <a href="<?= base_url('org/academics/subjects/delete/' . ($sub['uuid'] ?? $sub['id'])) ?>" class="btn-icon text-danger" onclick="return confirm('Are you sure you want to delete this subject?')" title="Delete Subject" style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: none; color: #DC2626; cursor: pointer;"><i class="fa-solid fa-trash"></i></a>
                         </div>
                     </td>
                 </tr>

@@ -38,7 +38,7 @@ class OrgTransport extends BaseController
         $orgId = $this->getOrgId();
         if (!$orgId) return redirect()->to('/org/login');
 
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $data = [
                 'org_id' => $orgId,
                 'vehicle_no' => $this->request->getPost('vehicle_no'),
@@ -83,7 +83,7 @@ class OrgTransport extends BaseController
         $orgId = $this->getOrgId();
         if (!$orgId) return redirect()->to('/org/login');
 
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $data = [
                 'org_id' => $orgId,
                 'name' => $this->request->getPost('name'),
@@ -125,7 +125,7 @@ class OrgTransport extends BaseController
         $orgId = $this->getOrgId();
         if (!$orgId) return redirect()->to('/org/login');
 
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $data = [
                 'org_id' => $orgId,
                 'route_id' => $this->request->getPost('route_id'),
@@ -176,7 +176,7 @@ class OrgTransport extends BaseController
         if (!$orgId) return redirect()->to('/org/login');
         $db = \Config\Database::connect();
 
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $data = [
                 'org_id' => $orgId,
                 'student_id' => $this->request->getPost('student_id'),
@@ -232,7 +232,7 @@ class OrgTransport extends BaseController
         if (!$orgId) return redirect()->to('/org/login');
         $db = \Config\Database::connect();
 
-        if ($this->request->getMethod() === 'post') {
+        if (strtolower($this->request->getMethod()) === 'post') {
             $data = [
                 'org_id' => $orgId,
                 'vehicle_id' => $this->request->getPost('vehicle_id'),

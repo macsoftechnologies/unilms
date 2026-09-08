@@ -77,7 +77,7 @@
                                 <button class="btn-icon text-primary" onclick="editCreator(<?= htmlspecialchars(json_encode($creator), ENT_QUOTES, 'UTF-8') ?>)" title="Edit Creator">
                                     <i class="fa-solid fa-pen"></i>
                                 </button>
-                                <form action="<?= base_url('superadmin/creators/delete/'.$creator['id']) ?>" method="POST" onsubmit="return confirm('Delete creator <?= esc($creator['name']) ?>?');" style="display:inline;">
+                                <form action="<?= base_url('superadmin/creators/delete/' . ($creator['uuid'] ?? $creator['id'])) ?>" method="POST" onsubmit="return confirm('Delete creator <?= esc($creator['name']) ?>?');" style="display:inline;">
                                     <?= csrf_field() ?>
                                     <button type="submit" class="btn-icon text-danger" title="Delete">
                                         <i class="fa-solid fa-trash"></i>
@@ -174,7 +174,7 @@ function openCreatorModal() {
 
 function editCreator(creator) {
     $('#creatorModalTitle').text('Edit Content Creator');
-    $('#creator_id').val(creator.id);
+    $('#creator_id').val(creator.uuid || creator.id);
     $('#creator_name').val(creator.name);
     $('#creator_email').val(creator.email);
     $('#creator_password').val('').prop('required', false);

@@ -58,7 +58,7 @@
                         </span>
                     </td>
                     <td>
-                        <a href="<?= base_url('org/hr/appraisals/delete/' . $a['id']) ?>" class="btn-icon text-danger" onclick="return confirm('Delete this appraisal record?')" title="Delete">
+                        <a href="<?= base_url('org/hr/appraisals/delete/' . ($a['uuid'] ?? $a['id'])) ?>" class="btn-icon text-danger" onclick="return confirm('Delete this appraisal record?')" title="Delete">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </td>

@@ -146,7 +146,11 @@ class LmsPortal extends BaseController
         
         $db = \Config\Database::connect();
         $data['subjects'] = $db->table('subjects')->where('org_id', $orgId)->get()->getResultArray();
-        $data['faculty'] = $db->table('hr_employees')->where('org_id', $orgId)->get()->getResultArray();
+        $data['faculty'] = $db->table('hr_employees e')
+            ->select('e.id, u.full_name, u.designation')
+            ->join('org_users u', 'u.id = e.org_user_id', 'left')
+            ->where('e.org_id', $orgId)
+            ->get()->getResultArray();
         
         return view('lms/portal/feedback', $data);
     }

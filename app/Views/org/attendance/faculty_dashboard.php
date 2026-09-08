@@ -22,7 +22,7 @@
                     <i class="fa-solid fa-users"></i> Cohort: <strong><?= esc($a['cohort_name']) ?></strong>
                 </div>
                 
-                <a href="<?= base_url('org/attendance/mark/'.$a['subject_id'].'/'.$a['cohort_id']) ?>" class="btn btn-primary" style="width: 100%; display: block; text-align: center;">Mark Attendance</a>
+                <a href="<?= base_url('org/attendance/mark/'.($a['subject_uuid'] ?? $a['subject_id']).'/'.($a['cohort_uuid'] ?? $a['cohort_id'])) ?>" class="btn btn-primary" style="width: 100%; display: block; text-align: center;">Mark Attendance</a>
             </div>
         <?php endforeach; ?>
     <?php else: ?>
@@ -56,7 +56,7 @@
                     <td><?= esc($s['cohort_name']) ?></td>
                     <td><?= esc($s['topic_taught'] ?? '-') ?></td>
                     <td>
-                        <a href="<?= base_url('org/attendance/mark/'.$s['subject_id'].'/'.$s['cohort_id'].'?session_id='.$s['id']) ?>" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px;">Edit Log</a>
+                        <a href="<?= base_url('org/attendance/mark/'.($s['subject_uuid'] ?? $s['subject_id']).'/'.($s['cohort_uuid'] ?? $s['cohort_id']).'?session_id='.($s['uuid'] ?? $s['id'])) ?>" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px;">Edit Log</a>
                     </td>
                 </tr>
                 <?php endforeach; ?>

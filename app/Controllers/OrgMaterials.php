@@ -47,7 +47,7 @@ class OrgMaterials extends BaseController
         if (!$this->hasPermission('manage_academics')) return redirect()->to('org/dashboard');
 
         $materialModel = new MaterialModel();
-        $material = $materialModel->where('org_id', $this->org_id)->find($id);
+        $material = $materialModel->where('org_id', $this->org_id)->findByIdOrUuid($id);
 
         if (!$material) {
             return redirect()->to('org/materials')->with('error', 'Material not found.');
@@ -111,12 +111,12 @@ class OrgMaterials extends BaseController
         }
 
         if ($id) {
-            $existing = $materialModel->where('org_id', $this->org_id)->find($id);
+            $existing = $materialModel->where('org_id', $this->org_id)->findByIdOrUuid($id);
             if ($existing) {
                 if ($data['type'] === 'file' && !isset($data['file_path'])) {
                     unset($data['file_path']); // Keep existing file path if no new file uploaded
                 }
-                $materialModel->update($id, $data);
+                $materialModel->update($existing['id'], $data);
             }
         } else {
             $data['faculty_user_id'] = $this->org_user_id;
@@ -131,9 +131,9 @@ class OrgMaterials extends BaseController
         if (!$this->hasPermission('manage_academics')) return redirect()->to('org/dashboard');
         
         $materialModel = new MaterialModel();
-        $existing = $materialModel->where('org_id', $this->org_id)->find($id);
+        $existing = $materialModel->where('org_id', $this->org_id)->findByIdOrUuid($id);
         if ($existing) {
-            $materialModel->delete($id);
+            $materialModel->delete($existing['id']);
         }
         return redirect()->to('org/materials')->with('success', 'Study Material deleted.');
     }

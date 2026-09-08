@@ -25,7 +25,7 @@
                     <td>
                         <div class="action-buttons">
                             <button class="btn-icon" onclick='editDept(<?= json_encode($dept) ?>)'><i class="fa-solid fa-pen"></i></button>
-                            <a href="<?= base_url('org/academics/departments/delete/'.$dept['id']) ?>" class="btn-icon text-danger" onclick="return confirm('Are you sure you want to delete this department? This is blocked if programs exist under it.')"><i class="fa-solid fa-trash"></i></a>
+                            <a href="<?= base_url('org/academics/departments/delete/' . ($dept['uuid'] ?? $dept['id'])) ?>" class="btn-icon text-danger" onclick="return confirm('Are you sure you want to delete this department? This is blocked if programs exist under it.')"><i class="fa-solid fa-trash"></i></a>
                         </div>
                     </td>
                 </tr>

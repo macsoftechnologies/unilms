@@ -37,7 +37,7 @@
                                 <td style="font-weight: 600; color: var(--primary);"><?= esc($t['name']) ?></td>
                                 <td style="font-size: 13px;"><?= esc($t['description']) ?></td>
                                 <td style="text-align: right;">
-                                    <a href="<?= base_url('org/timetable/periods/'.$t['id']) ?>" class="btn btn-primary" style="padding: 4px 10px; font-size: 12px;"><i class="fa-solid fa-clock"></i> Setup Periods</a>
+                                    <a href="<?= base_url('org/timetable/periods/' . ($t['uuid'] ?? $t['id'])) ?>" class="btn btn-primary" style="padding: 4px 10px; font-size: 12px;"><i class="fa-solid fa-clock"></i> Setup Periods</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

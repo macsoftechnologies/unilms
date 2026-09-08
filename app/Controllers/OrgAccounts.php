@@ -118,6 +118,9 @@ class OrgAccounts extends BaseController
         
         $transactionType = in_array($type, ['Income', 'Deposit', 'Refund']) ? 'Credit' : 'Debit';
         
+        $emp = $db->table('hr_employees')->where('org_id', session('org_id'))->where('org_user_id', session('org_user_id'))->get()->getRowArray();
+        $createdBy = $emp ? $emp['id'] : null;
+
         $data = [
             'org_id' => session('org_id'),
             'transaction_date' => $this->request->getPost('transaction_date'),
@@ -129,7 +132,7 @@ class OrgAccounts extends BaseController
             'reference_no' => $this->request->getPost('reference_no'),
             'description' => $this->request->getPost('description'),
             'party_name' => $this->request->getPost('party_name'),
-            'created_by' => session('org_user_id')
+            'created_by' => $createdBy
         ];
 
         $db->transStart();

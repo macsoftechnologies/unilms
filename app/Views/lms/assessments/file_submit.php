@@ -110,7 +110,7 @@ Submit Deliverable - <?= esc($assessment['title']) ?>
         </div>
     <?php else: ?>
         <!-- Upload Form -->
-        <form action="<?= site_url('lms/assessments/submit/' . $assessment['id']) ?>" method="POST" enctype="multipart/form-data">
+        <form action="<?= site_url('lms/assessments/submit/' . ($assessment['uuid'] ?? $assessment['id'])) ?>" method="POST" enctype="multipart/form-data">
             <?= csrf_field() ?>
             
             <div class="card" style="border-radius: 16px; border: 1px solid var(--border); padding: 24px; background: var(--card-bg); box-shadow: var(--shadow-sm); margin-bottom: 24px;">

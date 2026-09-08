@@ -68,7 +68,7 @@
                             <?php endif; ?>
                         </td>
                         <td style="padding: 12px 16px; text-align: right;">
-                            <a href="<?= base_url('lms/assignments/view/'.$a['id']) ?>" class="btn btn-sm btn-outline">Open</a>
+                            <a href="<?= base_url('lms/assignments/view/'.($a['uuid'] ?? $a['id'])) ?>" class="btn btn-sm btn-outline">Open</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

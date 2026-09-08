@@ -80,11 +80,11 @@
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn-icon" title="Log Follow-up" onclick="openFollowupModal(<?= $e['id'] ?>, '<?= esc($e['enquiry_number']) ?>', '<?= esc($e['student_name']) ?>')">
+                            <button class="btn-icon" title="Log Follow-up" onclick="openFollowupModal('<?= $e['uuid'] ?? $e['id'] ?>', '<?= esc($e['enquiry_number']) ?>', '<?= esc($e['student_name']) ?>')">
                                 <i class="fa-solid fa-comments"></i>
                             </button>
                             <?php if($e['status'] !== 'Sent to Admin Officer'): ?>
-                                <a href="<?= base_url('org/front-office/enquiries/convert/' . $e['id']) ?>" class="btn-icon text-success" title="Forward as Admission Lead" onclick="return confirm('Forward this prospect as an active Lead into Admissions CRM?')">
+                                <a href="<?= base_url('org/front-office/enquiries/convert/' . ($e['uuid'] ?? $e['id'])) ?>" class="btn-icon text-success" title="Forward as Admission Lead" onclick="return confirm('Forward this prospect as an active Lead into Admissions CRM?')">
                                     <i class="fa-solid fa-arrow-right-to-bracket"></i>
                                 </a>
                             <?php endif; ?>

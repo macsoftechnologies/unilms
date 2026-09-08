@@ -71,7 +71,7 @@
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
                             <?php if($app['status'] !== 'Selected'): ?>
-                                <a href="<?= base_url('org/placements/applications/issue-offer/' . $app['id']) ?>" class="btn-icon text-success" title="Select & Issue Job Offer" onclick="return confirm('Confirm selection and generate placement offer record?')">
+                                <a href="<?= base_url('org/placements/applications/issue-offer/' . ($app['uuid'] ?? $app['id'])) ?>" class="btn-icon text-success" title="Select & Issue Job Offer" onclick="return confirm('Confirm selection and generate placement offer record?')">
                                     <i class="fa-solid fa-award"></i>
                                 </a>
                             <?php endif; ?>

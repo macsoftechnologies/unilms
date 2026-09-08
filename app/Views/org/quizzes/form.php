@@ -12,7 +12,7 @@
     <form action="<?= base_url('org/quizzes/save') ?>" method="POST">
         <?= csrf_field() ?>
         <?php if($quiz): ?>
-            <input type="hidden" name="quiz_id" value="<?= $quiz['id'] ?>">
+            <input type="hidden" name="quiz_id" value="<?= esc($quiz['uuid'] ?? $quiz['id']) ?>">
         <?php endif; ?>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">

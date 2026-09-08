@@ -70,23 +70,29 @@ class OrgStudents extends BaseController
             $orgId = session('org_id') ?: 5;
             $db = \Config\Database::connect();
 
-            $student = $db->table('students')
+            $builder = $db->table('students')
                 ->select('students.*, cohorts.name as cohort_name, cohorts.current_semester_id, programs.name as program_name, programs.code as program_code, org_users.email, org_users.phone')
                 ->join('cohorts', 'cohorts.id = students.cohort_id', 'left')
                 ->join('programs', 'programs.id = cohorts.program_id', 'left')
                 ->join('org_users', 'org_users.id = students.user_id', 'left')
-                ->where('students.id', $id)
-                ->where('students.org_id', $orgId)
-                ->get()->getRowArray();
+                ->where('students.org_id', $orgId);
+
+            if (is_uuid($id)) {
+                $builder->where('students.uuid', $id);
+            } else {
+                $builder->where('students.id', $id);
+            }
+            $student = $builder->get()->getRowArray();
 
             if (!$student) {
                 return redirect()->to(base_url('org/students'))->with('error', 'Student not found.');
             }
+            $realId = $student['id'];
 
             // Bio details
             $bio = [];
             try {
-                $bio = $db->table('student_bio')->where('student_id', $id)->get()->getRowArray();
+                $bio = $db->table('student_bio')->where('student_id', $realId)->get()->getRowArray();
             } catch (\Throwable $e) {}
 
             // Fee ledger with correct fee_types join
@@ -99,7 +105,7 @@ class OrgStudents extends BaseController
                     ->select('student_fee_ledger.*, COALESCE(fee_types.name, \'Semester Tuition & Fee\') as structure_name')
                     ->join('fee_structures', 'fee_structures.id = student_fee_ledger.fee_structure_id', 'left')
                     ->join('fee_types', 'fee_types.id = fee_structures.fee_type_id', 'left')
-                    ->where('student_fee_ledger.student_id', $id)
+                    ->where('student_fee_ledger.student_id', $realId)
                     ->get()->getResultArray();
 
                 foreach ($fees as $f) {
@@ -115,11 +121,11 @@ class OrgStudents extends BaseController
             $attendancePct = 0;
             try {
                 $totalSessions = $db->table('attendance_records')
-                    ->where('student_id', $id)
+                    ->where('student_id', $realId)
                     ->countAllResults();
 
                 $presentSessions = $db->table('attendance_records')
-                    ->where('student_id', $id)
+                    ->where('student_id', $realId)
                     ->where('status', 'Present')
                     ->countAllResults();
 
@@ -133,7 +139,7 @@ class OrgStudents extends BaseController
                     ->select('internal_marks.*, mark_components.name as component_name, mark_components.max_marks, subjects.name as subject_name, subjects.code as subject_code')
                     ->join('mark_components', 'mark_components.id = internal_marks.component_id', 'left')
                     ->join('subjects', 'subjects.id = mark_components.subject_id', 'left')
-                    ->where('internal_marks.student_id', $id)
+                    ->where('internal_marks.student_id', $realId)
                     ->get()->getResultArray();
             } catch (\Throwable $e) {}
 
@@ -143,7 +149,7 @@ class OrgStudents extends BaseController
                 $parents = $db->table('parent_student_map')
                     ->select('parent_student_map.*, parents.first_name, parents.last_name, CONCAT(parents.first_name, \' \', parents.last_name) as full_name, parents.email, parents.phone')
                     ->join('parents', 'parents.id = parent_student_map.parent_id', 'left')
-                    ->where('parent_student_map.student_id', $id)
+                    ->where('parent_student_map.student_id', $realId)
                     ->get()->getResultArray();
             } catch (\Throwable $e) {}
 
@@ -153,7 +159,7 @@ class OrgStudents extends BaseController
                 $backlogs = $db->table('backlogs')
                     ->select('backlogs.*, subjects.name as subject_name, subjects.code as subject_code')
                     ->join('subjects', 'subjects.id = backlogs.subject_id', 'left')
-                    ->where('backlogs.student_id', $id)
+                    ->where('backlogs.student_id', $realId)
                     ->get()->getResultArray();
             } catch (\Throwable $e) {}
 
@@ -202,13 +208,14 @@ class OrgStudents extends BaseController
         $bioModel = new StudentBioModel();
         $userModel = new OrgUserModel();
 
-        $student = $studentModel->where('org_id', $orgId)->find($id);
+        $student = $studentModel->where('org_id', $orgId)->findByIdOrUuid($id);
         if (!$student) {
             return redirect()->to('org/students')->with('error', 'Student not found.');
         }
+        $realId = $student['id'];
 
         $user = $userModel->find($student['user_id']);
-        $bio = $bioModel->where('student_id', $id)->first();
+        $bio = $bioModel->where('student_id', $realId)->first();
 
         $data['student'] = $student;
         $data['user'] = $user;
@@ -227,6 +234,17 @@ class OrgStudents extends BaseController
         $userModel = new OrgUserModel();
 
         $id = $this->request->getPost('id');
+        $currentStudent = null;
+        $realId = null;
+        $targetUuid = null;
+        if (!empty($id)) {
+            $currentStudent = $studentModel->where('org_id', $orgId)->findByIdOrUuid($id);
+            if ($currentStudent) {
+                $realId = $currentStudent['id'];
+                $targetUuid = $currentStudent['uuid'] ?? $realId;
+            }
+        }
+
         $rollNumber = trim($this->request->getPost('roll_number'));
         $firstName = trim($this->request->getPost('first_name'));
         $lastName = trim($this->request->getPost('last_name'));
@@ -241,8 +259,8 @@ class OrgStudents extends BaseController
 
         // 1. Check duplicate roll_number in students table
         $existingRoll = $studentModel->where('org_id', $orgId)->where('roll_number', $rollNumber);
-        if ($id) {
-            $existingRoll->where('id !=', $id);
+        if ($realId) {
+            $existingRoll->where('id !=', $realId);
         }
         if ($existingRoll->first()) {
             return redirect()->back()->withInput()->with('error', "Roll Number '{$rollNumber}' is already assigned to another student in this institution.");
@@ -250,19 +268,16 @@ class OrgStudents extends BaseController
 
         // 2. Check duplicate employee_code/roll_number in org_users table
         $existingUserCode = $userModel->where('org_id', $orgId)->where('employee_code', $rollNumber);
-        if ($id) {
-            $currentStudent = $studentModel->find($id);
-            if (!empty($currentStudent['user_id'])) {
-                $existingUserCode->where('id !=', $currentStudent['user_id']);
-            }
+        if ($currentStudent && !empty($currentStudent['user_id'])) {
+            $existingUserCode->where('id !=', $currentStudent['user_id']);
         }
         if ($existingUserCode->first()) {
             return redirect()->back()->withInput()->with('error', "The code '{$rollNumber}' is already associated with another user account in this organization.");
         }
 
-        if ($id) {
+        if ($realId) {
             // Update
-            $student = $studentModel->where('org_id', $orgId)->find($id);
+            $student = $currentStudent;
             if (!$student) return redirect()->to('org/students')->with('error', 'Invalid student.');
 
             // Update user account
@@ -286,7 +301,7 @@ class OrgStudents extends BaseController
             }
 
             // Update student
-            $studentModel->update($id, [
+            $studentModel->update($realId, [
                 'roll_number' => $rollNumber,
                 'first_name' => $firstName,
                 'last_name' => $lastName,
@@ -309,16 +324,16 @@ class OrgStudents extends BaseController
                 'emergency_contact' => $this->request->getPost('emergency_contact')
             ];
 
-            $existingBio = $bioModel->where('student_id', $id)->first();
+            $existingBio = $bioModel->where('student_id', $realId)->first();
             if ($existingBio) {
                 $bioModel->update($existingBio['id'], $bioData);
             } else {
                 $bioData['org_id'] = $orgId;
-                $bioData['student_id'] = $id;
+                $bioData['student_id'] = $realId;
                 $bioModel->insert($bioData);
             }
 
-            return redirect()->to('org/students/profile/' . $id)->with('success', 'Student record updated successfully.');
+            return redirect()->to('org/students/profile/' . $targetUuid)->with('success', 'Student record updated successfully.');
         } else {
             // Create user
             if (!empty($email)) {
@@ -328,18 +343,20 @@ class OrgStudents extends BaseController
                 }
             }
 
-            $userId = $userModel->insert([
-                'org_id' => $orgId,
-                'employee_code' => $rollNumber,
-                'full_name' => $firstName . ' ' . $lastName,
-                'email' => $email ?: strtolower($rollNumber) . '@student.lms.edu',
-                'phone' => $phone,
-                'password_hash' => password_hash($this->request->getPost('password') ?: 'Password@123', PASSWORD_DEFAULT),
-                'user_type' => 'student',
-                'role' => 'STUDENT',
-                'is_org_admin' => 0
-            ]);
+            $userId = null;
+            if (!empty($email)) {
+                $userId = $userModel->insert([
+                    'org_id' => $orgId,
+                    'email' => $email,
+                    'phone' => $phone,
+                    'full_name' => $firstName . ' ' . $lastName,
+                    'employee_code' => $rollNumber,
+                    'password_hash' => password_hash($this->request->getPost('password') ?: 'Student@123', PASSWORD_DEFAULT),
+                    'status' => 'Active'
+                ]);
+            }
 
+            // Create student
             $studentId = $studentModel->insert([
                 'org_id' => $orgId,
                 'user_id' => $userId,
@@ -352,6 +369,7 @@ class OrgStudents extends BaseController
                 'status' => $status
             ]);
 
+            // Create bio
             $bioModel->insert([
                 'org_id' => $orgId,
                 'student_id' => $studentId,
@@ -366,7 +384,9 @@ class OrgStudents extends BaseController
                 'emergency_contact' => $this->request->getPost('emergency_contact')
             ]);
 
-            return redirect()->to('org/students/profile/' . $studentId)->with('success', 'Student registered successfully.');
+            $newStu = $studentModel->find($studentId);
+            $targetUuid = $newStu['uuid'] ?? $studentId;
+            return redirect()->to('org/students/profile/' . $targetUuid)->with('success', 'Student registered successfully.');
         }
     }
 
@@ -580,7 +600,7 @@ class OrgStudents extends BaseController
         $db = \Config\Database::connect();
 
         $parents = $db->table('parent_student_map')
-            ->select('parent_student_map.*, COALESCE(CONCAT(p.first_name, \' \', p.last_name), u.full_name, \'Parent\') as parent_name, COALESCE(p.email, u.email) as parent_email, COALESCE(p.phone, u.phone) as parent_phone, students.roll_number, students.first_name, students.last_name')
+            ->select('parent_student_map.*, COALESCE(CONCAT(p.first_name, \' \', p.last_name), u.full_name, \'Parent\') as parent_name, COALESCE(p.email, u.email) as parent_email, COALESCE(p.phone, u.phone) as parent_phone, students.roll_number, students.first_name, students.last_name, students.uuid as student_uuid')
             ->join('parents p', 'p.id = parent_student_map.parent_id', 'left')
             ->join('org_users u', 'u.id = parent_student_map.parent_id', 'left')
             ->join('students', 'students.id = parent_student_map.student_id', 'left')
@@ -648,7 +668,13 @@ class OrgStudents extends BaseController
     {
         $orgId = session('org_id') ?: 5;
         $db = \Config\Database::connect();
-        $db->table('parent_student_map')->where('org_id', $orgId)->where('id', $id)->delete();
+        $builder = $db->table('parent_student_map')->where('org_id', $orgId);
+        if (is_uuid($id)) {
+            $builder->where('uuid', $id);
+        } else {
+            $builder->where('id', $id);
+        }
+        $builder->delete();
         return redirect()->to(base_url('org/students/parents'))->with('success', 'Parent unlinked successfully.');
     }
 }

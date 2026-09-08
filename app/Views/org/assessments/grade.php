@@ -11,7 +11,7 @@ Grade Submission - <?= esc($student['first_name'] . ' ' . $student['last_name'])
             <h3 class="fw-bold text-dark mb-1">Grading & Rubric Evaluation</h3>
             <p class="text-muted mb-0">Student: <strong><?= esc($student['first_name'] . ' ' . $student['last_name']) ?></strong> (Roll: <?= esc($student['roll_number']) ?>)</p>
         </div>
-        <a href="<?= site_url('org/assessments/submissions/' . $assessment['id']) ?>" class="btn btn-outline-secondary rounded-pill px-3">
+        <a href="<?= site_url('org/assessments/submissions/' . ($assessment['uuid'] ?? $assessment['id'])) ?>" class="btn btn-outline-secondary rounded-pill px-3">
             <i class="fas fa-arrow-left me-1"></i> Back to Submissions
         </a>
     </div>

@@ -45,7 +45,7 @@ class LmsInternships extends BaseController
     public function apply($postingId)
     {
         $postingModel = new InternshipPostingModel();
-        $posting = $postingModel->where('status', 'published')->find($postingId);
+        $posting = $postingModel->where('status', 'published')->findByIdOrUuid($postingId);
 
         if (!$posting) {
             return redirect()->to('lms/internships')->with('error', 'Posting not found.');
@@ -59,7 +59,10 @@ class LmsInternships extends BaseController
     public function submitApplication()
     {
         $enrollmentModel = new InternshipEnrollmentModel();
-        $postingId = $this->request->getPost('posting_id');
+        $postingModel = new InternshipPostingModel();
+        $postingParam = $this->request->getPost('posting_id');
+        $posting = $postingModel->findByIdOrUuid($postingParam);
+        $postingId = $posting ? $posting['id'] : $postingParam;
 
         // Check if already applied
         $existing = $enrollmentModel->where('posting_id', $postingId)
@@ -102,17 +105,18 @@ class LmsInternships extends BaseController
     public function respondOffer()
     {
         $enrollmentModel = new InternshipEnrollmentModel();
-        $enrollmentId = $this->request->getPost('enrollment_id');
+        $enrollmentParam = $this->request->getPost('enrollment_id');
         $decision = $this->request->getPost('decision'); // accept or decline
 
-        $enrollment = $enrollmentModel->where('id', $enrollmentId)->where('student_id', $this->student_id)->first();
+        $enrollment = $enrollmentModel->where('student_id', $this->student_id)->findByIdOrUuid($enrollmentParam);
         if (!$enrollment) {
             return redirect()->back()->with('error', 'Offer record not found.');
         }
+        $enrollmentId = $enrollment['id'];
 
         if ($decision === 'accept') {
             $enrollmentModel->update($enrollmentId, ['status' => 'in_progress']);
-            return redirect()->to('lms/internships/workspace/' . $enrollmentId)->with('success', 'Congratulations! Offer accepted. Welcome to your internship workspace.');
+            return redirect()->to('lms/internships/workspace/' . ($enrollment['uuid'] ?? $enrollmentId))->with('success', 'Congratulations! Offer accepted. Welcome to your internship workspace.');
         } else {
             $enrollmentModel->update($enrollmentId, ['status' => 'cancelled', 'rejection_reason' => 'Declined by student']);
             return redirect()->to('lms/internships')->with('success', 'Offer declined.');
@@ -122,10 +126,17 @@ class LmsInternships extends BaseController
     public function workspace($enrollmentId)
     {
         $db = \Config\Database::connect();
+        $enrollmentModel = new InternshipEnrollmentModel();
+        $enrollmentRec = $enrollmentModel->where('student_id', $this->student_id)->findByIdOrUuid($enrollmentId);
+        if (!$enrollmentRec) {
+            return redirect()->to('lms/internships')->with('error', 'Workspace not found.');
+        }
+        $realEnrollmentId = $enrollmentRec['id'];
+
         $enrollment = $db->table('internship_enrollments e')
             ->select('e.*, p.company_name, p.role_title, p.start_date, p.end_date')
             ->join('internship_postings p', 'p.id = e.posting_id')
-            ->where('e.id', $enrollmentId)
+            ->where('e.id', $realEnrollmentId)
             ->where('e.student_id', $this->student_id)
             ->get()->getRowArray();
 

@@ -13,16 +13,16 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>#</th>
                     <th>Name</th>
                     <th>Description</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($categories as $cat): ?>
+                <?php $catIdx = 1; foreach($categories as $cat): ?>
                 <tr>
-                    <td><?= $cat['id'] ?></td>
+                    <td><?= $catIdx++ ?></td>
                     <td><?= esc($cat['name']) ?></td>
                     <td><?= esc($cat['description']) ?></td>
                     <td>

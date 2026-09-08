@@ -34,7 +34,7 @@
                         <?php endif; ?>
                     </td>
                     <td>
-                        <a href="<?= base_url('org/academics/timetable/builder/'.$s['id']) ?>" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px; margin-right: 4px;">
+                        <a href="<?= base_url('org/academics/timetable/builder/' . ($s['uuid'] ?? $s['id'])) ?>" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px; margin-right: 4px;">
                             <i class="fa-solid fa-table-cells"></i> Builder
                         </a>
                         <?php if($s['status'] == 'draft'): ?>

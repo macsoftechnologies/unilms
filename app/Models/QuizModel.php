@@ -17,10 +17,10 @@ class QuizModel extends BaseModel
 
     public function getQuizzesByOrg($org_id)
     {
-        return $this->select('lms_quizzes.*, subjects.name as subject_name, subjects.code as subject_code, cohorts.name as cohort_name, org_users.full_name')
-                    ->join('subjects', 'subjects.id = lms_quizzes.subject_id')
-                    ->join('cohorts', 'cohorts.id = lms_quizzes.cohort_id')
-                    ->join('org_users', 'org_users.id = lms_quizzes.faculty_user_id')
+        return $this->select('lms_quizzes.*, COALESCE(subjects.name, "General") as subject_name, COALESCE(subjects.code, "GEN") as subject_code, COALESCE(cohorts.name, "All Cohorts") as cohort_name, COALESCE(org_users.full_name, "Faculty") as full_name')
+                    ->join('subjects', 'subjects.id = lms_quizzes.subject_id', 'left')
+                    ->join('cohorts', 'cohorts.id = lms_quizzes.cohort_id', 'left')
+                    ->join('org_users', 'org_users.id = lms_quizzes.faculty_user_id', 'left')
                     ->where('lms_quizzes.org_id', $org_id)
                     ->orderBy('lms_quizzes.created_at', 'DESC')
                     ->findAll();

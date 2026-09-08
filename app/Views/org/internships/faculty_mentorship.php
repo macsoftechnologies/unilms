@@ -64,7 +64,7 @@ Faculty Internship Mentorship
                                     <?php endif; ?>
                                 </td>
                                 <td class="text-end pe-4">
-                                    <a href="<?= site_url('org/internships/reviewStudent/' . $e['id']) ?>" class="btn btn-sm btn-primary rounded-pill px-4 shadow-sm">
+                                    <a href="<?= site_url('org/internships/reviewStudent/' . ($e['uuid'] ?? $e['id'])) ?>" class="btn btn-sm btn-primary rounded-pill px-4 shadow-sm">
                                         <i class="fas fa-tasks me-1"></i> Mentorship Workspace
                                     </a>
                                 </td>

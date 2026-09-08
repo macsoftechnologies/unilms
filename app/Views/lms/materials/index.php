@@ -1,4 +1,4 @@
-<?= $this->extend('lms/layout') ?>
+<?= $this->extend('lms/career/layout') ?>
 <?= $this->section('page_title') ?>Study Materials & Video Courses<?= $this->endSection() ?>
 <?= $this->section('content') ?>
 
@@ -43,7 +43,7 @@
 
                         <div style="margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
                             <small style="color: var(--text-muted);"><i class="fa-solid fa-play-circle me-1"></i> <?= $c['lesson_count'] ?> Lessons (<?= $c['chapter_count'] ?> Ch)</small>
-                            <a href="<?= base_url('lms/materials/watch/' . $c['id']) ?>" class="btn btn-primary" style="padding: 8px 18px; font-size: 13px; border-radius: 20px;">
+                            <a href="<?= base_url('lms/materials/watch/' . ($c['uuid'] ?? $c['id'])) ?>" class="btn btn-primary" style="padding: 8px 18px; font-size: 13px; border-radius: 20px;">
                                 Watch Now <i class="fa-solid fa-arrow-right ms-1"></i>
                             </a>
                         </div>

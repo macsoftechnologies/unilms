@@ -751,6 +751,81 @@
                 padding: 0 16px;
             }
         }
+
+        /* Next-Gen LMS Header Launcher Button */
+        .lms-launch-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 6px 14px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 55%, #db2777 100%);
+            color: #ffffff !important;
+            text-decoration: none;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: lmsBtnPulse 3s ease-in-out infinite;
+        }
+
+        .lms-launch-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            color: #ffffff !important;
+        }
+
+        .lms-btn-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .lms-btn-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.15;
+            text-align: left;
+        }
+
+        .lms-btn-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            color: #ffffff;
+        }
+
+        .lms-btn-tag {
+            font-size: 9px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+            letter-spacing: 0.2px;
+        }
+
+        .lms-btn-arrow {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-left: 2px;
+            transition: transform 0.2s;
+        }
+
+        .lms-launch-btn:hover .lms-btn-arrow {
+            transform: translate(2px, -2px);
+            color: #ffffff;
+        }
+
+        @keyframes lmsBtnPulse {
+            0%, 100% { box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
+            50% { box-shadow: 0 4px 22px rgba(219, 39, 119, 0.5); }
+        }
     </style>
 </head>
 <body>
@@ -792,11 +867,19 @@
         <!-- Nav Links Categorized -->
         <div class="sidebar-nav-container">
             
-            <!-- Category 1: Academics -->
-            <div class="nav-category-header">Academics & Schedule</div>
+            <!-- Category 1: Academics & Learning -->
+            <div class="nav-category-header">Academics & Learning</div>
             <a href="<?= base_url('lms/dashboard') ?>" class="sidebar-nav-link <?= strpos($uri, 'lms/dashboard') !== false || $uri == 'lms' ? 'active' : '' ?>">
                 <i class="fa-solid fa-gauge-high nav-icon"></i>
                 <span>Dashboard</span>
+            </a>
+            <a href="<?= base_url('lms/assessments') ?>" class="sidebar-nav-link <?= (strpos($uri, 'lms/assessments') !== false || strpos($uri, 'lms/assignments') !== false) ? 'active' : '' ?>">
+                <i class="fa-solid fa-file-pen nav-icon" style="color: #ec4899;"></i>
+                <span>Assessments & Assignments</span>
+            </a>
+            <a href="<?= base_url('lms/quizzes') ?>" class="sidebar-nav-link <?= strpos($uri, 'lms/quizzes') !== false ? 'active' : '' ?>">
+                <i class="fa-solid fa-circle-question nav-icon" style="color: #059669;"></i>
+                <span>CBT Quizzes & Tests</span>
             </a>
             <a href="<?= base_url('lms/timetable') ?>" class="sidebar-nav-link <?= strpos($uri, 'lms/timetable') !== false ? 'active' : '' ?>">
                 <i class="fa-solid fa-calendar-days nav-icon"></i>
@@ -815,28 +898,8 @@
                 <span>OBE Outcomes & Matrix</span>
             </a>
 
-            <!-- Category 2: Learning Hub -->
-            <div class="nav-category-header">Learning & Courses</div>
-            <a href="<?= base_url('lms/materials') ?>" class="sidebar-nav-link <?= strpos($uri, 'lms/materials') !== false ? 'active' : '' ?>">
-                <i class="fa-solid fa-play-circle nav-icon"></i>
-                <span>Video Masterclasses</span>
-                <span class="nav-pill-badge">Blended</span>
-            </a>
-            <a href="<?= base_url('lms/assignments') ?>" class="sidebar-nav-link <?= strpos($uri, 'lms/assignments') !== false ? 'active' : '' ?>">
-                <i class="fa-solid fa-file-lines nav-icon"></i>
-                <span>Assignments & Tasks</span>
-            </a>
-            <a href="<?= base_url('lms/quizzes') ?>" class="sidebar-nav-link <?= strpos($uri, 'lms/quizzes') !== false ? 'active' : '' ?>">
-                <i class="fa-solid fa-laptop-code nav-icon"></i>
-                <span>CBT Online Exams</span>
-            </a>
-            <a href="<?= base_url('lms/assessments') ?>" class="sidebar-nav-link <?= strpos($uri, 'lms/assessments') !== false ? 'active' : '' ?>">
-                <i class="fa-solid fa-layer-group nav-icon"></i>
-                <span>Interactive Assessments</span>
-            </a>
-
-            <!-- Category 3: Campus & Career -->
-            <div class="nav-category-header">Campus Life & Career</div>
+            <!-- Category 2: Campus Life & Student Services -->
+            <div class="nav-category-header">Campus Life & Student Services</div>
             <a href="<?= base_url('lms/internships') ?>" class="sidebar-nav-link <?= strpos($uri, 'lms/internships') !== false ? 'active' : '' ?>">
                 <i class="fa-solid fa-briefcase nav-icon"></i>
                 <span>Industry Internships</span>
@@ -886,6 +949,31 @@
             </div>
 
             <div class="header-right">
+                <?php 
+                    $lmsEnabled = session('lms_enabled');
+                    if ($lmsEnabled === null || $lmsEnabled === 0 || $lmsEnabled === '0') {
+                        $orgId = session('org_id') ?: session('lms_org_id') ?: 5;
+                        try {
+                            $db = \Config\Database::connect();
+                            $orgCheck = $db->table('organizations')->select('lms_enabled')->where('id', $orgId)->get()->getRowArray();
+                            $lmsEnabled = (int)($orgCheck['lms_enabled'] ?? 1);
+                            session()->set('lms_enabled', $lmsEnabled);
+                        } catch (\Throwable $e) {
+                            $lmsEnabled = 1;
+                        }
+                    }
+                ?>
+                <?php if ($lmsEnabled): ?>
+                <a href="<?= base_url('lms/learn') ?>" class="lms-launch-btn" title="Open Next-Gen LMS Learning Cloud">
+                    <span class="lms-btn-icon"><i class="fa-solid fa-graduation-cap"></i></span>
+                    <span class="lms-btn-text">
+                        <span class="lms-btn-name">LMS Portal</span>
+                        <span class="lms-btn-tag">Next-Gen ✨</span>
+                    </span>
+                    <span class="lms-btn-arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+                </a>
+                <?php endif; ?>
+
                 <div class="term-badge-header">
                     <i class="fa-solid fa-graduation-cap"></i>
                     <span><?= esc(session('semester_name') ?: 'Semester 1') ?> (<?= esc(session('academic_year_name') ?: '2026-2027') ?>)</span>

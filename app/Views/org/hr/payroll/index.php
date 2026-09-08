@@ -90,7 +90,7 @@
                 
                 <td style="padding: 12px 8px; text-align: right;">
                     <?php if($is_admin && $p['status'] == 'Draft'): ?>
-                        <form action="<?= base_url('org/hr/payroll/mark_paid/'.$p['id']) ?>" method="POST" style="display: inline;">
+                        <form action="<?= base_url('org/hr/payroll/mark_paid/' . ($p['uuid'] ?? $p['id'])) ?>" method="POST" style="display: inline;">
                             <?= csrf_field() ?>
                             <button class="btn btn-outline" style="padding: 4px 10px; font-size: 12px; color: var(--success); border-color: var(--success);">Mark Paid</button>
                         </form>

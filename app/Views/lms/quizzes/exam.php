@@ -413,7 +413,7 @@
             <div class="submit-panel">
                 <form action="<?= base_url('lms/quizzes/submit') ?>" method="POST" id="submitForm" onsubmit="return confirmSubmit()">
                     <?= csrf_field() ?>
-                    <input type="hidden" name="attempt_id" value="<?= $attempt['id'] ?>">
+                    <input type="hidden" name="attempt_id" value="<?= esc($attempt['uuid'] ?? $attempt['id']) ?>">
                     <button type="submit" class="btn btn-success" style="width: 100%; justify-content: center;"><i class="fa-solid fa-paper-plane me-1"></i> Submit Exam</button>
                 </form>
             </div>
@@ -457,7 +457,7 @@
         const totalQuestions = <?= count($questions) ?>;
         let currentQuestion = 0;
         let answeredCount = <?= count(array_filter($questions, fn($q) => $q['saved_option_id'] !== null)) ?>;
-        const attemptId = <?= $attempt['id'] ?>;
+        const attemptId = '<?= esc($attempt['uuid'] ?? $attempt['id']) ?>';
         
         document.getElementById('answeredCount').innerText = answeredCount;
 

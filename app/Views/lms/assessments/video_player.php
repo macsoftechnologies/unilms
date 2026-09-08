@@ -64,7 +64,7 @@ Interactive Video Assessment - <?= esc($assessment['title']) ?>
             </div>
         </div>
     <?php else: ?>
-        <form action="<?= site_url('lms/assessments/submit/' . $assessment['id']) ?>" method="POST" id="videoQuizForm">
+        <form action="<?= site_url('lms/assessments/submit/' . ($assessment['uuid'] ?? $assessment['id'])) ?>" method="POST" id="videoQuizForm">
             <?= csrf_field() ?>
             
             <div style="display: grid; grid-template-columns: 2.1fr 1fr; gap: 24px; align-items: start;">
@@ -81,13 +81,15 @@ Interactive Video Assessment - <?= esc($assessment['title']) ?>
                             }
                             ?>
                             <?php if (!empty($ytId)): ?>
-                                <iframe 
-                                    id="videoPlayerIframe" 
-                                    src="https://www.youtube.com/embed/<?= esc($ytId) ?>?enablejsapi=1&rel=0&modestbranding=1" 
-                                    style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;" 
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                    allowfullscreen>
-                                </iframe>
+                                <div id="ytPlayerContainer" style="position: absolute; top:0; left:0; width:100%; height:100%;">
+                                    <iframe 
+                                        id="videoPlayerIframe" 
+                                        src="https://www.youtube.com/embed/<?= esc($ytId) ?>?enablejsapi=1&rel=0&modestbranding=1" 
+                                        style="width:100%; height:100%; border:0;" 
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                        allowfullscreen>
+                                    </iframe>
+                                </div>
                             <?php else: ?>
                                 <video id="nativeVideoPlayer" controls style="position: absolute; top:0; left:0; width:100%; height:100%;">
                                     <source src="<?= esc($url) ?>" type="video/mp4">
@@ -133,7 +135,7 @@ Interactive Video Assessment - <?= esc($assessment['title']) ?>
                             </div>
                             <div>
                                 <strong style="font-size: 13px; color: var(--text-main); display: block;">Interactive Timeline Pins Active</strong>
-                                <small style="color: var(--text-muted); font-size: 11.5px;">The video will halt at checkpoint timestamps shown on the right panel.</small>
+                                <small style="color: var(--text-muted); font-size: 11.5px;">The video will pause automatically at checkpoint timestamps.</small>
                             </div>
                         </div>
                         <div style="display: flex; align-items: center; gap: 8px;" id="timelinePills">
@@ -142,8 +144,8 @@ Interactive Video Assessment - <?= esc($assessment['title']) ?>
                                 $mins = floor(($q['timestamp_seconds'] ?? 0) / 60);
                                 $secs = str_pad(($q['timestamp_seconds'] ?? 0) % 60, 2, '0', STR_PAD_LEFT);
                                 ?>
-                                <span class="badge" id="pill-q-<?= $q['id'] ?>" style="background: var(--bg-canvas); color: var(--text-muted); border: 1px solid var(--border); font-size: 11px; padding: 4px 8px; border-radius: 6px;">
-                                    <i class="fa-solid fa-clock me-1"></i> <?= $mins ?>:<?= $secs ?>
+                                <span class="badge" id="pill-q-<?= $q['id'] ?>" style="background: var(--bg-canvas); color: var(--text-muted); border: 1px solid var(--border); font-size: 11px; padding: 5px 10px; border-radius: 8px; font-weight: 600;">
+                                    <i class="fa-solid fa-clock me-1 text-primary"></i> <?= $mins ?>:<?= $secs ?>
                                 </span>
                             <?php endforeach; ?>
                         </div>
@@ -154,17 +156,17 @@ Interactive Video Assessment - <?= esc($assessment['title']) ?>
                 <div>
                     <!-- Tracker Card -->
                     <div class="card" style="border-radius: 16px; padding: 20px; border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow-sm); margin-bottom: 16px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
                             <h4 style="margin: 0; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
                                 <i class="fa-solid fa-list-check" style="color: var(--primary);"></i> Checkpoint List
                             </h4>
-                            <span class="badge" id="answeredCountBadge" style="background: rgba(16, 185, 129, 0.12); color: var(--success); font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 6px;">
+                            <span class="badge" id="answeredCountBadge" style="background: rgba(16, 185, 129, 0.12); color: var(--success); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px;">
                                 0 / <?= count($questions) ?> Done
                             </span>
                         </div>
 
                         <!-- Questions Tracker List -->
-                        <div style="display: flex; flex-direction: column; gap: 10px;" id="questionsTrackerList">
+                        <div style="display: flex; flex-direction: column; gap: 12px;" id="questionsTrackerList">
                             <?php if (empty($questions)): ?>
                                 <div style="text-align: center; padding: 20px 0; color: var(--text-muted); font-size: 13px;">
                                     No checkpoint questions configured for this video.
@@ -175,26 +177,32 @@ Interactive Video Assessment - <?= esc($assessment['title']) ?>
                                     $mins = floor(($q['timestamp_seconds'] ?? 0) / 60);
                                     $secs = str_pad(($q['timestamp_seconds'] ?? 0) % 60, 2, '0', STR_PAD_LEFT);
                                     ?>
-                                    <div id="tracker-item-<?= $q['id'] ?>" class="checkpoint-tracker-item" style="border: 1px solid var(--border); border-radius: 12px; padding: 12px; background: var(--bg-canvas); transition: all 0.2s ease;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                            <div style="display: flex; align-items: center; gap: 6px;">
-                                                <span class="badge" style="background: rgba(99, 102, 241, 0.1); color: var(--primary); font-size: 10.5px; font-weight: 700;">
+                                    <div id="tracker-item-<?= $q['id'] ?>" class="checkpoint-tracker-item" style="border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; background: var(--bg-canvas); transition: all 0.25s ease;">
+                                        <!-- Top Row: Checkpoint Tag + Timestamp + Status -->
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                <span class="badge" style="background: rgba(99, 102, 241, 0.12); color: var(--primary); font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">
                                                     Q<?= $idx + 1 ?>
                                                 </span>
-                                                <span style="font-size: 11.5px; font-weight: 700; color: var(--text-main);">
-                                                    @ <?= $mins ?>:<?= $secs ?>
+                                                <span style="font-size: 12px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 4px;">
+                                                    <i class="fa-solid fa-clock text-primary" style="font-size: 11px;"></i> <?= $mins ?>:<?= $secs ?>
                                                 </span>
                                             </div>
-                                            <span id="tracker-status-<?= $q['id'] ?>" class="badge" style="background: rgba(100, 116, 139, 0.1); color: var(--text-muted); font-size: 10px; font-weight: 600;">
+                                            <span id="tracker-status-<?= $q['id'] ?>" class="badge" style="background: rgba(100, 116, 139, 0.12); color: var(--text-muted); font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">
                                                 Pending
                                             </span>
                                         </div>
-                                        <p style="font-size: 12px; color: var(--text-main); margin: 0 0 6px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                                            <?= esc($q['question_text']) ?>
-                                        </p>
-                                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted);">
-                                            <span><i class="fa-solid fa-star text-warning me-1"></i> <?= esc($q['marks'] ?? 1) ?> Pts</span>
-                                            <span id="tracker-ans-<?= $q['id'] ?>" style="font-weight: 700; color: var(--primary);"></span>
+
+                                        <!-- Middle Row: Locked Status / Live Status -->
+                                        <div id="tracker-text-<?= $q['id'] ?>" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.4; display: flex; align-items: center; gap: 6px; padding: 6px 10px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border);">
+                                            <i class="fa-solid fa-lock text-warning" style="font-size: 11px;"></i>
+                                            <span>Reveals & pauses at <strong><?= $mins ?>:<?= $secs ?></strong></span>
+                                        </div>
+
+                                        <!-- Bottom Row: Marks & Answer preview -->
+                                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: var(--text-muted); border-top: 1px dashed var(--border); padding-top: 6px;">
+                                            <span style="font-weight: 600;"><i class="fa-solid fa-star text-warning me-1"></i> <?= esc($q['marks'] ?? 1) ?> Mark<?= ($q['marks'] ?? 1) == 1 ? '' : 's' ?></span>
+                                            <span id="tracker-ans-<?= $q['id'] ?>" style="font-weight: 800; font-size: 11.5px; color: var(--primary);"></span>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -208,7 +216,7 @@ Interactive Video Assessment - <?= esc($assessment['title']) ?>
                             <i class="fa-solid fa-paper-plane"></i> Submit Assessment
                         </button>
                         <p style="font-size: 11.5px; color: var(--text-muted); margin: 10px 0 0; text-align: center;">
-                            Answer all checkpoints before submitting for full evaluation.
+                            Complete all checkpoints while watching to submit.
                         </p>
                     </div>
                 </div>
@@ -252,19 +260,23 @@ Interactive Video Assessment - <?= esc($assessment['title']) ?>
         }
         .checkpoint-tracker-item.active {
             border-color: var(--primary) !important;
-            background: rgba(99, 102, 241, 0.04) !important;
-            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15);
+            background: rgba(99, 102, 241, 0.06) !important;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.12);
         }
         .checkpoint-tracker-item.completed {
-            border-color: rgba(16, 185, 129, 0.3) !important;
-            background: rgba(16, 185, 129, 0.04) !important;
+            border-color: rgba(16, 185, 129, 0.35) !important;
+            background: rgba(16, 185, 129, 0.05) !important;
         }
         </style>
+
+        <!-- Load YouTube Iframe API -->
+        <script src="https://www.youtube.com/iframe_api"></script>
 
         <script>
         const questionsList = <?= json_encode($questions) ?>;
         const clearedQuestions = {};
         let currentActiveQuestion = null;
+        let ytPlayer = null;
 
         function updateTrackerBadge() {
             const answeredCount = Object.keys(clearedQuestions).length;
@@ -297,13 +309,19 @@ Interactive Video Assessment - <?= esc($assessment['title']) ?>
             // Highlight tracker item
             document.querySelectorAll('.checkpoint-tracker-item').forEach(el => el.classList.remove('active'));
             const trackerItem = document.getElementById(`tracker-item-${q.id}`);
-            if (trackerItem) trackerItem.classList.add('active');
+            if (trackerItem) {
+                trackerItem.classList.add('active');
+                const tText = document.getElementById(`tracker-text-${q.id}`);
+                if (tText && !clearedQuestions[q.id]) {
+                    tText.innerHTML = '<span style="color: var(--primary); font-weight: 700;"><i class="fa-solid fa-circle-play me-1"></i> Active checkpoint &bull; Answer question</span>';
+                }
+            }
             
             let opts = [];
             try { opts = JSON.parse(q.options); } catch (e) {}
 
             let html = '';
-            opts.forEach((opt, idx) => {
+            opts.forEach((opt) => {
                 const checked = clearedQuestions[q.id] === opt.key ? 'checked' : '';
                 html += `
                     <label class="checkpoint-opt-label ${checked ? 'selected' : ''}" onclick="this.parentNode.querySelectorAll('label').forEach(l => l.classList.remove('selected')); this.classList.add('selected');">
@@ -321,9 +339,13 @@ Interactive Video Assessment - <?= esc($assessment['title']) ?>
             const nativeVideo = document.getElementById('nativeVideoPlayer');
             if (nativeVideo) nativeVideo.pause();
 
-            const ytIframe = document.getElementById('videoPlayerIframe');
-            if (ytIframe && ytIframe.contentWindow) {
-                ytIframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+            if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+                ytPlayer.pauseVideo();
+            } else {
+                const ytIframe = document.getElementById('videoPlayerIframe');
+                if (ytIframe && ytIframe.contentWindow) {
+                    ytIframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                }
             }
         }
 
@@ -331,9 +353,13 @@ Interactive Video Assessment - <?= esc($assessment['title']) ?>
             const nativeVideo = document.getElementById('nativeVideoPlayer');
             if (nativeVideo) nativeVideo.play();
 
-            const ytIframe = document.getElementById('videoPlayerIframe');
-            if (ytIframe && ytIframe.contentWindow) {
-                ytIframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
+                ytPlayer.playVideo();
+            } else {
+                const ytIframe = document.getElementById('videoPlayerIframe');
+                if (ytIframe && ytIframe.contentWindow) {
+                    ytIframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                }
             }
         }
 
@@ -344,6 +370,41 @@ Interactive Video Assessment - <?= esc($assessment['title']) ?>
                     showQuestion(q);
                 }
             });
+        }
+
+        // YouTube Iframe API ready callback
+        window.onYouTubeIframeAPIReady = function() {
+            const iframe = document.getElementById('videoPlayerIframe');
+            if (iframe) {
+                ytPlayer = new YT.Player('videoPlayerIframe', {
+                    events: {
+                        'onStateChange': function(event) {
+                            if (event.data === YT.PlayerState.PLAYING) {
+                                startYtTimer();
+                            } else {
+                                stopYtTimer();
+                            }
+                        }
+                    }
+                });
+            }
+        };
+
+        let ytTimer = null;
+        function startYtTimer() {
+            stopYtTimer();
+            ytTimer = setInterval(function() {
+                if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
+                    const curTime = Math.floor(ytPlayer.getCurrentTime());
+                    checkTimeAndPause(curTime);
+                }
+            }, 800);
+        }
+        function stopYtTimer() {
+            if (ytTimer) {
+                clearInterval(ytTimer);
+                ytTimer = null;
+            }
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -359,7 +420,7 @@ Interactive Video Assessment - <?= esc($assessment['title']) ?>
                 });
             }
 
-            // YouTube IFrame postMessage listener
+            // Fallback message listener for YouTube
             if (ytIframe) {
                 window.addEventListener('message', function (event) {
                     try {
@@ -368,11 +429,6 @@ Interactive Video Assessment - <?= esc($assessment['title']) ?>
                             checkTimeAndPause(Math.floor(data.info.currentTime));
                         }
                     } catch (err) {}
-                });
-
-                // Request YouTube postMessage events
-                ytIframe.addEventListener('load', function() {
-                    ytIframe.contentWindow.postMessage('{"event":"listening","id":1}', '*');
                 });
             }
 
@@ -390,12 +446,18 @@ Interactive Video Assessment - <?= esc($assessment['title']) ?>
                     const statusBadge = document.getElementById(`tracker-status-${currentActiveQuestion.id}`);
                     if (statusBadge) {
                         statusBadge.textContent = 'Answered';
-                        statusBadge.style.background = 'rgba(16, 185, 129, 0.12)';
+                        statusBadge.style.background = 'rgba(16, 185, 129, 0.15)';
                         statusBadge.style.color = '#059669';
                     }
                     const ansLabel = document.getElementById(`tracker-ans-${currentActiveQuestion.id}`);
                     if (ansLabel) {
                         ansLabel.textContent = `Selected: ${selected.value}`;
+                    }
+                    const trackerText = document.getElementById(`tracker-text-${currentActiveQuestion.id}`);
+                    if (trackerText) {
+                        trackerText.innerHTML = '<span style="color: var(--success); font-weight: 700;"><i class="fa-solid fa-circle-check me-1"></i> Checkpoint answered</span>';
+                        trackerText.style.background = 'rgba(16, 185, 129, 0.08)';
+                        trackerText.style.borderColor = 'rgba(16, 185, 129, 0.2)';
                     }
                     const trackerItem = document.getElementById(`tracker-item-${currentActiveQuestion.id}`);
                     if (trackerItem) {

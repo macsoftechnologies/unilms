@@ -26,7 +26,7 @@
                             <?= esc($t['category']) ?> • <?= esc($t['page_size']) ?> (<?= esc($t['orientation']) ?>)
                         </span>
                     </div>
-                    <a href="<?= base_url('org/certificates/delete/' . $t['id']) ?>" class="btn-icon text-danger" onclick="return confirm('Delete this template?')" title="Delete">
+                    <a href="<?= base_url('org/certificates/delete/' . ($t['uuid'] ?? $t['id'])) ?>" class="btn-icon text-danger" onclick="return confirm('Delete this template?')" title="Delete">
                         <i class="fa-solid fa-trash"></i>
                     </a>
                 </div>
@@ -37,7 +37,7 @@
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 14px;">
-                <a href="<?= base_url('org/certificates/generate?template_id=' . $t['id']) ?>" class="btn btn-primary" style="padding: 6px 14px; font-size: 13px;">
+                <a href="<?= base_url('org/certificates/generate?template_id=' . ($t['uuid'] ?? $t['id'])) ?>" class="btn btn-primary" style="padding: 6px 14px; font-size: 13px;">
                     <i class="fa-solid fa-file-signature me-1"></i> Issue for Student
                 </a>
             </div>

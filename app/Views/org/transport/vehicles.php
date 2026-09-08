@@ -44,7 +44,7 @@
                     </td>
                     <td>
                         <button class="btn btn-outline" style="padding: 4px 8px; font-size: 12px;" onclick="editVehicle(<?= htmlspecialchars(json_encode($v)) ?>)">Edit</button>
-                        <a href="<?= base_url('org/transport/delete_vehicle/'.$v['id']) ?>" class="btn btn-outline" style="padding: 4px 8px; font-size: 12px; color: var(--danger); border-color: var(--danger);" onclick="return confirm('Delete this vehicle?')">Del</a>
+                        <a href="<?= base_url('org/transport/delete_vehicle/' . ($v['uuid'] ?? $v['id'])) ?>" class="btn btn-outline" style="padding: 4px 8px; font-size: 12px; color: var(--danger); border-color: var(--danger);" onclick="return confirm('Delete this vehicle?')">Del</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

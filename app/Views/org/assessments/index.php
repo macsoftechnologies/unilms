@@ -82,7 +82,7 @@ Dynamic Assessments & Exams
                                     <?= !empty($a['due_date']) ? date('M d, Y h:i A', strtotime($a['due_date'])) : '<span class="text-muted">No Deadline</span>' ?>
                                 </td>
                                 <td>
-                                    <a href="<?= site_url('org/assessments/submissions/' . $a['id']) ?>" class="badge bg-secondary-subtle text-dark px-2 py-1 text-decoration-none">
+                                    <a href="<?= site_url('org/assessments/submissions/' . ($a['uuid'] ?? $a['id'])) ?>" class="badge bg-secondary-subtle text-dark px-2 py-1 text-decoration-none">
                                         <i class="fas fa-user-check me-1"></i> <?= $a['submission_count'] ?> Submitted
                                     </a>
                                 </td>
@@ -94,13 +94,13 @@ Dynamic Assessments & Exams
                                     <?php endif; ?>
                                 </td>
                                 <td class="text-end pe-4">
-                                    <a href="<?= site_url('org/assessments/submissions/' . $a['id']) ?>" class="btn btn-sm btn-outline-info rounded-circle me-1" title="View Submissions">
+                                    <a href="<?= site_url('org/assessments/submissions/' . ($a['uuid'] ?? $a['id'])) ?>" class="btn btn-sm btn-outline-info rounded-circle me-1" title="View Submissions">
                                         <i class="fas fa-users"></i>
                                     </a>
-                                    <a href="<?= site_url('org/assessments/edit/' . $a['id']) ?>" class="btn btn-sm btn-outline-primary rounded-circle me-1" title="Edit Assessment">
+                                    <a href="<?= site_url('org/assessments/edit/' . ($a['uuid'] ?? $a['id'])) ?>" class="btn btn-sm btn-outline-primary rounded-circle me-1" title="Edit Assessment">
                                         <i class="fas fa-pencil-alt"></i>
                                     </a>
-                                    <a href="<?= site_url('org/assessments/delete/' . $a['id']) ?>" class="btn btn-sm btn-outline-danger rounded-circle" onclick="return confirm('Are you sure you want to delete this assessment?');" title="Delete">
+                                    <a href="<?= site_url('org/assessments/delete/' . ($a['uuid'] ?? $a['id'])) ?>" class="btn btn-sm btn-outline-danger rounded-circle" onclick="return confirm('Are you sure you want to delete this assessment?');" title="Delete">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </td>

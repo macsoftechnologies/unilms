@@ -40,7 +40,7 @@
                     <td>
                         <div class="action-buttons">
                             <button class="btn-icon text-primary" title="View Profile"><i class="fa-solid fa-eye"></i></button>
-                            <a href="<?= base_url('org/admissions/documents?app='.$app['id']) ?>" class="btn-icon text-success" title="Verify Documents"><i class="fa-solid fa-folder-open"></i></a>
+                            <a href="<?= base_url('org/admissions/documents?app=' . ($app['uuid'] ?? $app['id'])) ?>" class="btn-icon text-success" title="Verify Documents"><i class="fa-solid fa-folder-open"></i></a>
                         </div>
                     </td>
                 </tr>

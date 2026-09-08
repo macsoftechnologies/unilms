@@ -78,7 +78,7 @@
                             </div>
                         </div>
 
-                        <a href="<?= base_url('org/fee-config/program/' . $prog['id']) ?>" class="btn btn-primary" style="width: 100%; background: linear-gradient(135deg, #7C3AED 0%, #4C1D95 100%); border: none; padding: 10px; font-weight: 700; border-radius: 8px; text-decoration: none; text-align: center; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                        <a href="<?= base_url('org/fee-config/program/' . ($prog['uuid'] ?? $prog['id'])) ?>" class="btn btn-primary" style="width: 100%; background: linear-gradient(135deg, #7C3AED 0%, #4C1D95 100%); border: none; padding: 10px; font-weight: 700; border-radius: 8px; text-decoration: none; text-align: center; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
                             <i class="fa-solid fa-folder-open"></i> Open Program Batches & Semesters →
                         </a>
                     </div>

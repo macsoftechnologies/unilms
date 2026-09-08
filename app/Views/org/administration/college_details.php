@@ -10,6 +10,7 @@
 </div>
 
 <?php 
+    $details = is_array($details) ? $details : [];
     $hasData = !empty($details['name']) || !empty($details['college_name']);
 ?>
 
@@ -32,7 +33,7 @@
                 <h2 style="margin: 0 0 4px; font-size: 20px; font-weight: 800; color: var(--text-primary);"><?= esc($details['name'] ?? $details['college_name'] ?? 'College Profile') ?></h2>
                 <div style="display: flex; gap: 8px; align-items: center;">
                     <span class="badge" style="background: rgba(124, 58, 237, 0.12); color: #7C3AED; font-weight: 700; font-size: 12px; padding: 3px 8px; border-radius: 6px;">
-                        <?= esc($details['affiliation'] ?: 'Autonomous Technical University') ?>
+                        <?= esc(!empty($details['affiliation']) ? $details['affiliation'] : 'Autonomous Technical University') ?>
                     </span>
                     <?php if(!empty($details['naac_grade'])): ?>
                         <span class="badge" style="background: rgba(16, 185, 129, 0.12); color: #059669; font-weight: 700; font-size: 12px; padding: 3px 8px; border-radius: 6px;">
@@ -50,12 +51,12 @@
 
     <!-- Info Grid -->
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-        <div style="background: var(--bg-main, #f8fafc); padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border-color);">
+        <div style="background: var(--bg-main, #f8fafc); padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border-color); cursor: default;">
             <div style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">
                 <i class="fa-solid fa-envelope me-1" style="color: #7C3AED;"></i> Official Contact Email
             </div>
             <strong style="font-size: 14px; color: var(--text-primary); word-break: break-all;">
-                <?= esc($details['contact_email'] ?: '—') ?>
+                <?= esc(!empty($details['contact_email']) ? $details['contact_email'] : '—') ?>
             </strong>
         </div>
 
@@ -64,7 +65,7 @@
                 <i class="fa-solid fa-phone me-1" style="color: #7C3AED;"></i> Official Contact Phone
             </div>
             <strong style="font-size: 14px; color: var(--text-primary);">
-                <?= esc($details['contact_phone'] ?: '—') ?>
+                <?= esc(!empty($details['contact_phone']) ? $details['contact_phone'] : '—') ?>
             </strong>
         </div>
 
@@ -73,7 +74,7 @@
                 <i class="fa-solid fa-award me-1" style="color: #7C3AED;"></i> Approval Code / NAAC
             </div>
             <strong style="font-size: 14px; color: var(--text-primary);">
-                <?= esc($details['naac_grade'] ?: '—') ?>
+                <?= esc(!empty($details['naac_grade']) ? $details['naac_grade'] : '—') ?>
             </strong>
         </div>
 
@@ -82,7 +83,7 @@
                 <i class="fa-solid fa-certificate me-1" style="color: #7C3AED;"></i> Affiliated University
             </div>
             <strong style="font-size: 14px; color: var(--text-primary);">
-                <?= esc($details['affiliation'] ?: '—') ?>
+                <?= esc(!empty($details['affiliation']) ? $details['affiliation'] : '—') ?>
             </strong>
         </div>
 
@@ -91,7 +92,7 @@
                 <i class="fa-solid fa-location-dot me-1" style="color: #7C3AED;"></i> Campus Physical Address
             </div>
             <div style="font-size: 13.5px; color: var(--text-primary); font-weight: 600; line-height: 1.5;">
-                <?= nl2br(esc($details['address'] ?: '—')) ?>
+                <?= nl2br(esc(!empty($details['address']) ? $details['address'] : '—')) ?>
             </div>
         </div>
     </div>

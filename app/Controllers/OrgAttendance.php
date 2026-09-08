@@ -61,7 +61,7 @@ class OrgAttendance extends BaseController
                                  ->first();
                                  
         if ($existing) {
-            return redirect()->to('org/attendance/take/' . $existing['id']);
+            return redirect()->to('org/attendance/take/' . ($existing['uuid'] ?? $existing['id']));
         }
         
         $session_id = $sessionModel->insert([
@@ -92,7 +92,9 @@ class OrgAttendance extends BaseController
             $recordModel->insertBatch($inserts);
         }
         
-        return redirect()->to('org/attendance/take/' . $session_id);
+        $newSession = $sessionModel->find($session_id);
+        $targetUuid = $newSession['uuid'] ?? $session_id;
+        return redirect()->to('org/attendance/take/' . $targetUuid);
     }
 
     public function take($session_id)
@@ -104,18 +106,19 @@ class OrgAttendance extends BaseController
                                 ->join('cohorts', 'cohorts.id = attendance_sessions.cohort_id')
                                 ->join('subjects', 'subjects.id = attendance_sessions.subject_id')
                                 ->where('attendance_sessions.org_id', $this->org_id)
-                                ->find($session_id);
+                                ->findByIdOrUuid($session_id);
                                 
         if (!$session) return redirect()->to('org/attendance');
+        $realSessionId = $session['id'];
 
         $db = \Config\Database::connect();
         $students = $db->table('attendance_records r')
                        ->select('r.id as record_id, r.status, s.id as student_id, s.first_name, s.last_name, s.roll_number')
                        ->join('students s', 's.id = r.student_id')
-                       ->where('r.session_id', $session_id)
+                       ->where('r.session_id', $realSessionId)
                        ->orderBy('s.roll_number', 'ASC')
                        ->get()->getResultArray();
-                       
+                        
         return view('org/attendance/take', [
             'session' => $session,
             'students' => $students
@@ -127,6 +130,10 @@ class OrgAttendance extends BaseController
         if (!$this->hasPermission('manage_academics')) return redirect()->to('org/dashboard');
         
         $session_id = $this->request->getPost('session_id');
+        $sessionModel = new AttendanceSessionModel();
+        $sess = $sessionModel->findByIdOrUuid($session_id);
+        $realSessionId = $sess ? $sess['id'] : (int)$session_id;
+
         $attendance_data = $this->request->getPost('attendance'); // array of record_id => status
         $topic_taught = $this->request->getPost('topic_taught');
         
@@ -138,8 +145,7 @@ class OrgAttendance extends BaseController
         }
         
         if ($topic_taught) {
-            $sessionModel = new AttendanceSessionModel();
-            $sessionModel->update($session_id, ['topic_taught' => $topic_taught]);
+            $sessionModel->update($realSessionId, ['topic_taught' => $topic_taught]);
         }
         
         return redirect()->to('org/attendance')->with('success', 'Attendance saved successfully.');

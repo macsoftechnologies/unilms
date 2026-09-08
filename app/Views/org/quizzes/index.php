@@ -46,11 +46,11 @@
                             <?php endif; ?>
                         </td>
                         <td style="text-align: right;">
-                            <a href="<?= base_url('org/quizzes/results/'.$q['id']) ?>" class="btn btn-primary" style="padding: 4px 10px; font-size: 12px; margin-right: 4px; background: var(--success); border-color: var(--success);"><i class="fa-solid fa-chart-line"></i> Results</a>
-                            <a href="<?= base_url('org/quizzes/questions/'.$q['id']) ?>" class="btn btn-primary" style="padding: 4px 10px; font-size: 12px; margin-right: 4px;"><i class="fa-solid fa-list-ul"></i> Builder</a>
-                            <a href="<?= base_url('org/quizzes/edit/'.$q['id']) ?>" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px; margin-right: 4px;"><i class="fa-solid fa-pen"></i> Settings</a>
+                            <a href="<?= base_url('org/quizzes/results/' . ($q['uuid'] ?? $q['id'])) ?>" class="btn btn-primary" style="padding: 4px 10px; font-size: 12px; margin-right: 4px; background: var(--success); border-color: var(--success);"><i class="fa-solid fa-chart-line"></i> Results</a>
+                            <a href="<?= base_url('org/quizzes/questions/' . ($q['uuid'] ?? $q['id'])) ?>" class="btn btn-primary" style="padding: 4px 10px; font-size: 12px; margin-right: 4px;"><i class="fa-solid fa-list-ul"></i> Builder</a>
+                            <a href="<?= base_url('org/quizzes/edit/' . ($q['uuid'] ?? $q['id'])) ?>" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px; margin-right: 4px;"><i class="fa-solid fa-pen"></i> Settings</a>
                             
-                            <form action="<?= base_url('org/quizzes/delete/'.$q['id']) ?>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this quiz completely?');">
+                            <form action="<?= base_url('org/quizzes/delete/' . ($q['uuid'] ?? $q['id'])) ?>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this quiz completely?');">
                                 <?= csrf_field() ?>
                                 <button type="submit" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px; color: var(--danger); border-color: var(--danger);"><i class="fa-solid fa-trash"></i></button>
                             </form>

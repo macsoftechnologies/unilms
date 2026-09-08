@@ -178,10 +178,10 @@ foreach ($courses as $c) {
 
                         <!-- Card Action Buttons -->
                         <div class="d-flex align-items-center gap-2 pt-2 border-top">
-                            <a href="<?= base_url('creator/courses/preview/' . $c['id']) ?>" class="btn btn-sm btn-outline-info rounded-pill px-3 py-1 flex-grow-1" title="Preview Student View">
+                            <a href="<?= base_url('creator/courses/preview/' . ($c['uuid'] ?? $c['id'])) ?>" class="btn btn-sm btn-outline-info rounded-pill px-3 py-1 flex-grow-1" title="Preview Student View">
                                 <i class="fa-solid fa-eye me-1"></i> Preview
                             </a>
-                            <a href="<?= base_url('creator/courses/builder/' . $c['id']) ?>" class="btn btn-sm btn-primary rounded-pill px-3 py-1 flex-grow-1" style="background-color: var(--primary);" title="Curriculum Builder">
+                            <a href="<?= base_url('creator/courses/builder/' . ($c['uuid'] ?? $c['id'])) ?>" class="btn btn-sm btn-primary rounded-pill px-3 py-1 flex-grow-1" style="background-color: var(--primary);" title="Curriculum Builder">
                                 <i class="fa-solid fa-photo-film me-1"></i> Builder
                             </a>
                             <div class="dropdown">
@@ -190,21 +190,21 @@ foreach ($courses as $c) {
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 p-2" style="font-size: 13px;">
                                     <li>
-                                        <a class="dropdown-item rounded-2 py-2" href="<?= base_url('creator/courses/edit/' . $c['id']) ?>">
+                                        <a class="dropdown-item rounded-2 py-2" href="<?= base_url('creator/courses/edit/' . ($c['uuid'] ?? $c['id'])) ?>">
                                             <i class="fa-solid fa-pen-to-square text-secondary me-2"></i> Edit Course Info
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item rounded-2 py-2" href="#" onclick="<?= $c['status'] === 'published' 
-                                            ? "showConfirmAction({ title: 'Unpublish Course?', message: 'This will hide &quot;".esc($c['title'], 'js')."&quot; from students and revert it back to Draft mode.', icon: 'fa-solid fa-eye-slash fa-2x', iconColor: '#D97706', iconBg: 'rgba(217, 119, 6, 0.12)', btnText: 'Unpublish & Make Draft', btnClass: 'btn-warning', actionUrl: '".base_url('creator/courses/togglePublish/' . $c['id'])."'}); return false;" 
-                                            : "showConfirmAction({ title: 'Publish Course Live?', message: 'This will make &quot;".esc($c['title'], 'js')."&quot; immediately available to all enrolled students.', icon: 'fa-solid fa-rocket fa-2x', iconColor: '#16A34A', iconBg: 'rgba(22, 163, 74, 0.12)', btnText: '🚀 Yes, Publish Course', btnClass: 'btn-success', actionUrl: '".base_url('creator/courses/togglePublish/' . $c['id'])."'}); return false;" ?>">
+                                            ? "showConfirmAction({ title: 'Unpublish Course?', message: 'This will hide &quot;".esc($c['title'], 'js')."&quot; from students and revert it back to Draft mode.', icon: 'fa-solid fa-eye-slash fa-2x', iconColor: '#D97706', iconBg: 'rgba(217, 119, 6, 0.12)', btnText: 'Unpublish & Make Draft', btnClass: 'btn-warning', actionUrl: '".base_url('creator/courses/togglePublish/' . ($c['uuid'] ?? $c['id']))."'}); return false;" 
+                                            : "showConfirmAction({ title: 'Publish Course Live?', message: 'This will make &quot;".esc($c['title'], 'js')."&quot; immediately available to all enrolled students.', icon: 'fa-solid fa-rocket fa-2x', iconColor: '#16A34A', iconBg: 'rgba(22, 163, 74, 0.12)', btnText: '🚀 Yes, Publish Course', btnClass: 'btn-success', actionUrl: '".base_url('creator/courses/togglePublish/' . ($c['uuid'] ?? $c['id']))."'}); return false;" ?>">
                                             <i class="fa-solid <?= $c['status'] === 'published' ? 'fa-eye-slash text-warning' : 'fa-globe text-success' ?> me-2"></i>
                                             <?= $c['status'] === 'published' ? 'Unpublish Course' : 'Publish Course' ?>
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider my-1"></li>
                                     <li>
-                                        <a class="dropdown-item rounded-2 py-2 text-danger" href="#" onclick="showConfirmAction({ title: 'Delete Course & Lessons?', message: 'Are you sure you want to delete &quot;<?= esc($c['title'], 'js') ?>&quot; and all of its uploaded video lessons?', icon: 'fa-solid fa-trash-can fa-2x', iconColor: '#DC2626', iconBg: 'rgba(220, 38, 38, 0.12)', btnText: 'Delete Permanently', btnClass: 'btn-danger', actionUrl: '<?= base_url('creator/courses/delete/' . $c['id']) ?>' }); return false;">
+                                        <a class="dropdown-item rounded-2 py-2 text-danger" href="#" onclick="showConfirmAction({ title: 'Delete Course & Lessons?', message: 'Are you sure you want to delete &quot;<?= esc($c['title'], 'js') ?>&quot; and all of its uploaded video lessons?', icon: 'fa-solid fa-trash-can fa-2x', iconColor: '#DC2626', iconBg: 'rgba(220, 38, 38, 0.12)', btnText: 'Delete Permanently', btnClass: 'btn-danger', actionUrl: '<?= base_url('creator/courses/delete/' . ($c['uuid'] ?? $c['id'])) ?>' }); return false;">
                                             <i class="fa-solid fa-trash text-danger me-2"></i> Delete Course
                                         </a>
                                     </li>
@@ -272,25 +272,25 @@ foreach ($courses as $c) {
                             </td>
                             <td class="text-end pe-4">
                                 <div class="btn-group gap-1">
-                                    <a href="<?= base_url('creator/courses/preview/' . $c['id']) ?>" class="btn btn-sm btn-outline-info rounded-pill px-2" title="Preview Student View">
+                                    <a href="<?= base_url('creator/courses/preview/' . ($c['uuid'] ?? $c['id'])) ?>" class="btn btn-sm btn-outline-info rounded-pill px-2" title="Preview Student View">
                                         <i class="fa-solid fa-eye me-1"></i> Preview
                                     </a>
-                                    <a href="<?= base_url('creator/courses/builder/' . $c['id']) ?>" class="btn btn-sm btn-primary rounded-pill px-3" style="background-color: var(--primary);" title="Manage Chapters & Lessons">
+                                    <a href="<?= base_url('creator/courses/builder/' . ($c['uuid'] ?? $c['id'])) ?>" class="btn btn-sm btn-primary rounded-pill px-3" style="background-color: var(--primary);" title="Manage Chapters & Lessons">
                                         <i class="fa-solid fa-photo-film me-1"></i> Builder
                                     </a>
-                                    <a href="<?= base_url('creator/courses/edit/' . $c['id']) ?>" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="Edit Course Details">
+                                    <a href="<?= base_url('creator/courses/edit/' . ($c['uuid'] ?? $c['id'])) ?>" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="Edit Course Details">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
                                     <button type="button" 
                                             class="btn btn-sm <?= $c['status'] === 'published' ? 'btn-outline-warning' : 'btn-outline-success' ?> rounded-pill px-2" 
                                             onclick="<?= $c['status'] === 'published' 
-                                                ? "showConfirmAction({ title: 'Unpublish Course?', message: 'This will hide &quot;".esc($c['title'], 'js')."&quot; from students and revert it back to Draft mode.', icon: 'fa-solid fa-eye-slash fa-2x', iconColor: '#D97706', iconBg: 'rgba(217, 119, 6, 0.12)', btnText: 'Unpublish & Make Draft', btnClass: 'btn-warning', actionUrl: '".base_url('creator/courses/togglePublish/' . $c['id'])."'})" 
-                                                : "showConfirmAction({ title: 'Publish Course Live?', message: 'This will make &quot;".esc($c['title'], 'js')."&quot; immediately available to all enrolled students.', icon: 'fa-solid fa-rocket fa-2x', iconColor: '#16A34A', iconBg: 'rgba(22, 163, 74, 0.12)', btnText: '🚀 Yes, Publish Course', btnClass: 'btn-success', actionUrl: '".base_url('creator/courses/togglePublish/' . $c['id'])."'})" ?>"
+                                                ? "showConfirmAction({ title: 'Unpublish Course?', message: 'This will hide &quot;".esc($c['title'], 'js')."&quot; from students and revert it back to Draft mode.', icon: 'fa-solid fa-eye-slash fa-2x', iconColor: '#D97706', iconBg: 'rgba(217, 119, 6, 0.12)', btnText: 'Unpublish & Make Draft', btnClass: 'btn-warning', actionUrl: '".base_url('creator/courses/togglePublish/' . ($c['uuid'] ?? $c['id']))."'})" 
+                                                : "showConfirmAction({ title: 'Publish Course Live?', message: 'This will make &quot;".esc($c['title'], 'js')."&quot; immediately available to all enrolled students.', icon: 'fa-solid fa-rocket fa-2x', iconColor: '#16A34A', iconBg: 'rgba(22, 163, 74, 0.12)', btnText: '🚀 Yes, Publish Course', btnClass: 'btn-success', actionUrl: '".base_url('creator/courses/togglePublish/' . ($c['uuid'] ?? $c['id']))."'})" ?>"
                                             title="<?= $c['status'] === 'published' ? 'Unpublish Course' : 'Publish Course' ?>">
                                         <i class="fa-solid <?= $c['status'] === 'published' ? 'fa-eye-slash' : 'fa-globe' ?>"></i>
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-2" 
-                                            onclick="showConfirmAction({ title: 'Delete Course & Lessons?', message: 'Are you sure you want to delete &quot;<?= esc($c['title'], 'js') ?>&quot; and all of its uploaded video lessons?', icon: 'fa-solid fa-trash-can fa-2x', iconColor: '#DC2626', iconBg: 'rgba(220, 38, 38, 0.12)', btnText: 'Delete Permanently', btnClass: 'btn-danger', actionUrl: '<?= base_url('creator/courses/delete/' . $c['id']) ?>' })" title="Delete">
+                                            onclick="showConfirmAction({ title: 'Delete Course & Lessons?', message: 'Are you sure you want to delete &quot;<?= esc($c['title'], 'js') ?>&quot; and all of its uploaded video lessons?', icon: 'fa-solid fa-trash-can fa-2x', iconColor: '#DC2626', iconBg: 'rgba(220, 38, 38, 0.12)', btnText: 'Delete Permanently', btnClass: 'btn-danger', actionUrl: '<?= base_url('creator/courses/delete/' . ($c['uuid'] ?? $c['id'])) ?>' })" title="Delete">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </div>

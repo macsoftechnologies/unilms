@@ -29,10 +29,10 @@
             </div>
         </div>
         <div style="display: flex; gap: 8px;">
-            <a href="<?= base_url('org/systems/access-groups/edit/' . $group['id']) ?>" class="btn btn-outline" style="flex: 1; justify-content: center;"><i class="fa-solid fa-pen"></i> Edit</a>
+            <a href="<?= base_url('org/systems/access-groups/edit/' . ($group['uuid'] ?? $group['id'])) ?>" class="btn btn-outline" style="flex: 1; justify-content: center;"><i class="fa-solid fa-pen"></i> Edit</a>
             <form action="<?= base_url('org/systems/access-groups/delete') ?>" method="POST" style="flex: 1;" onsubmit="return confirm('Delete this group? Users in it will lose these permissions.')">
                 <?= csrf_field() ?>
-                <input type="hidden" name="group_id" value="<?= $group['id'] ?>">
+                <input type="hidden" name="group_id" value="<?= $group['uuid'] ?? $group['id'] ?>">
                 <button type="submit" class="btn btn-outline" style="width: 100%; justify-content: center; color: var(--danger); border-color: var(--danger);"><i class="fa-solid fa-trash"></i> Delete</button>
             </form>
         </div>

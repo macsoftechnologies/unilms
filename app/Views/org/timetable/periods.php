@@ -68,7 +68,7 @@
                                     <?php endif; ?>
                                 </td>
                                 <td style="padding: 12px 16px; text-align: right;">
-                                    <form action="<?= base_url('org/timetable/periods/delete/'.$p['id']) ?>" method="POST" onsubmit="return confirm('Delete this period slot?');" style="display: inline;">
+                                    <form action="<?= base_url('org/timetable/periods/delete/' . ($p['uuid'] ?? $p['id'])) ?>" method="POST" onsubmit="return confirm('Delete this period slot?');" style="display: inline;">
                                         <?= csrf_field() ?>
                                         <button type="submit" class="btn-icon text-danger" style="background: none; border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 6px; color: #DC2626; cursor: pointer;" title="Delete Slot">
                                             <i class="fa-solid fa-trash"></i>
@@ -127,7 +127,7 @@
 <!-- ========================================== -->
 <div class="drawer-overlay" id="autoGenModal">
     <div class="drawer-content" style="max-width: 540px;">
-        <form action="<?= base_url('org/timetable/periods/auto-generate/' . $template['id']) ?>" method="POST" id="autoGenForm">
+        <form action="<?= base_url('org/timetable/periods/auto-generate/' . ($template['uuid'] ?? $template['id'])) ?>" method="POST" id="autoGenForm">
             <?= csrf_field() ?>
             <div class="drawer-header" style="background: linear-gradient(135deg, #7C3AED 0%, #4C1D95 100%); color: #fff; padding: 18px 22px; display: flex; justify-content: space-between; align-items: center;">
                 <h3 style="margin: 0; font-size: 17px; font-weight: 700; color: #fff;"><i class="fa-solid fa-wand-magic-sparkles me-2"></i> Auto-Generate Timetable Schedule</h3>

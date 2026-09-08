@@ -88,7 +88,7 @@
                 <?php if($is_admin): ?>
                 <td style="padding: 12px 8px; text-align: right;">
                     <?php if($l['status'] == 'Pending'): ?>
-                    <form action="<?= base_url('org/hr/leaves/update_status/'.$l['id']) ?>" method="POST" style="display: flex; gap: 8px; justify-content: flex-end;">
+                    <form action="<?= base_url('org/hr/leaves/update_status/' . ($l['uuid'] ?? $l['id'])) ?>" method="POST" style="display: flex; gap: 8px; justify-content: flex-end;">
                         <?= csrf_field() ?>
                         <input type="text" name="hr_remarks" class="form-control" style="width: 150px; padding: 4px 8px; height: 32px;" placeholder="Remarks (optional)">
                         <button type="submit" name="status" value="Approved" class="btn btn-primary" style="padding: 4px 12px; height: 32px; font-size: 12px; background: var(--success); border-color: var(--success);">Approve</button>

@@ -68,20 +68,21 @@ class LmsAssessments extends BaseController
         $questionModel = new AssessmentQuestionModel();
         $submissionModel = new AssessmentSubmissionModel();
 
-        $assessment = $assessmentModel->where('is_published', 1)->find($id);
+        $assessment = $assessmentModel->where('is_published', 1)->findByIdOrUuid($id);
         if (!$assessment) {
             return redirect()->to('lms/assessments')->with('error', 'Assessment not found or not published.');
         }
+        $realId = $assessment['id'];
 
         // Get past submission if any
-        $submission = $submissionModel->where('assessment_id', $id)
+        $submission = $submissionModel->where('assessment_id', $realId)
             ->where('student_id', $this->student_id)
             ->first();
 
         // Questions for CBT or Video
         $questions = [];
         if (in_array($assessment['assessment_type'], ['cbt_quiz', 'interactive_video'])) {
-            $qQuery = $questionModel->where('assessment_id', $id);
+            $qQuery = $questionModel->where('assessment_id', $realId);
             if ($assessment['randomize_questions'] && $assessment['assessment_type'] === 'cbt_quiz') {
                 $qQuery->orderBy('RAND()');
             } else {
@@ -123,16 +124,17 @@ class LmsAssessments extends BaseController
         $questionModel = new AssessmentQuestionModel();
         $submissionModel = new AssessmentSubmissionModel();
 
-        $assessment = $assessmentModel->find($id);
+        $assessment = $assessmentModel->findByIdOrUuid($id);
         if (!$assessment) {
             return redirect()->to('lms/assessments')->with('error', 'Assessment not found.');
         }
+        $realId = $assessment['id'];
 
         $isLate = (!empty($assessment['due_date']) && strtotime($assessment['due_date']) < time()) ? 1 : 0;
         $type = $assessment['assessment_type'];
 
         $submissionData = [
-            'assessment_id' => $id,
+            'assessment_id' => $realId,
             'student_id'    => $this->student_id,
             'submitted_at'  => date('Y-m-d H:i:s'),
             'is_late'       => $isLate,

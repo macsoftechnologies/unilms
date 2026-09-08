@@ -50,7 +50,7 @@
                         <?= esc($p['first_name'] . ' ' . $p['last_name']) ?>
                     </td>
                     <td style="padding: 14px 16px;">
-                        <a href="<?= base_url('org/students/profile/' . $p['student_id']) ?>" style="color: #7C3AED; text-decoration: none; font-weight: 700; background: rgba(124, 58, 237, 0.08); padding: 4px 10px; border-radius: 6px;">
+                        <a href="<?= base_url('org/students/profile/' . ($p['student_uuid'] ?? $p['student_id'])) ?>" style="color: #7C3AED; text-decoration: none; font-weight: 700; background: rgba(124, 58, 237, 0.08); padding: 4px 10px; border-radius: 6px;">
                             <?= esc($p['roll_number']) ?>
                         </a>
                     </td>
@@ -60,7 +60,7 @@
                         </span>
                     </td>
                     <td style="padding: 14px 16px; text-align: right;">
-                        <a href="<?= base_url('org/students/unlink-parent/' . $p['id']) ?>" class="btn-icon text-danger" style="background: none; border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 6px; color: #DC2626; cursor: pointer; display: inline-flex;" onclick="return confirm('Unlink this parent from student?')" title="Unlink Parent">
+                        <a href="<?= base_url('org/students/unlink-parent/' . ($p['uuid'] ?? $p['id'])) ?>" class="btn-icon text-danger" style="background: none; border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 6px; color: #DC2626; cursor: pointer; display: inline-flex;" onclick="return confirm('Unlink this parent from student?')" title="Unlink Parent">
                             <i class="fa-solid fa-unlink"></i>
                         </a>
                     </td>

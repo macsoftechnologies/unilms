@@ -42,7 +42,7 @@
                     </td>
                     <td>
                         <button class="btn btn-outline" style="padding: 4px 8px; font-size: 12px;" onclick="editSubscription(<?= htmlspecialchars(json_encode($s)) ?>)">Edit</button>
-                        <a href="<?= base_url('org/transport/delete_subscription/'.$s['id']) ?>" class="btn btn-outline" style="padding: 4px 8px; font-size: 12px; color: var(--danger); border-color: var(--danger);" onclick="return confirm('Delete this subscription?')">Del</a>
+                        <a href="<?= base_url('org/transport/delete_subscription/' . ($s['uuid'] ?? $s['id'])) ?>" class="btn btn-outline" style="padding: 4px 8px; font-size: 12px; color: var(--danger); border-color: var(--danger);" onclick="return confirm('Delete this subscription?')">Del</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

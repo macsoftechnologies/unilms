@@ -68,7 +68,7 @@
                                 <button type="button" class="btn btn-outline" onclick='editHall(<?= json_encode($hall) ?>)' style="padding: 6px 12px; font-size: 12.5px; font-weight: 600; border-radius: 6px; margin-right: 6px;">
                                     <i class="fa-solid fa-edit me-1"></i> Edit
                                 </button>
-                                <form action="<?= base_url('org/administration/delete-lecture-hall/' . $hall['id']) ?>" method="POST" style="display: inline;" onsubmit="return confirm('Delete this room?');">
+                                <form action="<?= base_url('org/administration/delete-lecture-hall/' . ($hall['uuid'] ?? $hall['id'])) ?>" method="POST" style="display: inline;" onsubmit="return confirm('Delete this room?');">
                                     <?= csrf_field() ?>
                                     <button type="submit" class="btn-icon text-danger" style="background: none; border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 6px; color: #DC2626; cursor: pointer;" title="Delete">
                                         <i class="fa-solid fa-trash"></i>
@@ -148,7 +148,7 @@ function openAddHallDrawer() {
 
 function editHall(hall) {
     document.getElementById('drawerTitle').innerText = 'Edit Classroom / Lab';
-    document.getElementById('hall_id').value = hall.id;
+    document.getElementById('hall_id').value = hall.uuid || hall.id;
     document.getElementById('hall_name').value = hall.name;
     document.getElementById('hall_capacity').value = hall.capacity;
     document.getElementById('hall_type').value = hall.hall_type;

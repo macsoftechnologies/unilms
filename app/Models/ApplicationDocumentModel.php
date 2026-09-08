@@ -10,6 +10,5 @@ class ApplicationDocumentModel extends BaseModel
         'org_id', 'application_id', 'document_type_id', 'doc_name', 'file_path',
         'status', 'rejection_reason', 'verified_by', 'verified_at'
     ];
-    protected $useTimestamps = true;
-    protected $updatedField = null; // No updated_at in schema
+    protected $useTimestamps = false;
 }

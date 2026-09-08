@@ -108,12 +108,12 @@ class OrgAdmissions extends BaseController
         $leadModel = new LeadModel();
         
         // Ensure it belongs to org
-        $lead = $leadModel->find($id);
+        $lead = $leadModel->findByIdOrUuid($id);
         if (!$lead || $lead['org_id'] != session('org_id')) {
             return redirect()->back()->with('error', 'Lead not found.');
         }
 
-        $leadModel->delete($id);
+        $leadModel->delete($lead['id']);
         return redirect()->back()->with('success', 'Lead deleted successfully.');
     }
 
@@ -139,7 +139,7 @@ class OrgAdmissions extends BaseController
         
         $orgId = session('org_id');
         
-        $lead = $leadModel->where('org_id', $orgId)->find($leadId);
+        $lead = $leadModel->where('org_id', $orgId)->findByIdOrUuid($leadId);
         if (!$lead) return redirect()->back()->with('error', 'Lead not found.');
 
         // Snapshot program info
@@ -275,8 +275,9 @@ class OrgAdmissions extends BaseController
         $logModel = new AdmissionActivityLogModel();
         $orgId = session('org_id');
 
-        $app = $appModel->where('org_id', $orgId)->find($appId);
+        $app = $appModel->where('org_id', $orgId)->findByIdOrUuid($appId);
         if (!$app) return redirect()->back()->with('error', 'Application not found.');
+        $realAppId = $app['id'];
 
         // 1. Create org_user for the student (Unified Auth)
         $userId = $userModel->insert([
@@ -303,7 +304,7 @@ class OrgAdmissions extends BaseController
         $studentModel->insert([
             'org_id' => $orgId,
             'user_id' => $userId,
-            'application_id' => $appId,
+            'application_id' => $realAppId,
             'roll_number' => $rollNumber,
             'first_name' => $firstName,
             'last_name' => $lastName,
@@ -313,11 +314,11 @@ class OrgAdmissions extends BaseController
         ]);
 
         // 4. Update Application Status
-        $appModel->update($appId, ['status' => 'Enrolled']);
+        $appModel->update($realAppId, ['status' => 'Enrolled']);
         
         $logModel->insert([
             'org_id' => $orgId,
-            'application_id' => $appId,
+            'application_id' => $realAppId,
             'action' => 'Enrolled',
             'description' => 'Student enrolled successfully with Roll Number: ' . $rollNumber,
             'performed_by' => session('org_user_id')

@@ -49,12 +49,12 @@
                     </td>
                     <td>
                         <?php if($app['status'] == 'Applied'): ?>
-                        <form action="<?= base_url('org/examinations/update-application-status/' . $app['id']) ?>" method="POST" style="display:inline-block;">
+                        <form action="<?= base_url('org/examinations/update-application-status/' . ($app['uuid'] ?? $app['id'])) ?>" method="POST" style="display:inline-block;">
                             <?= csrf_field() ?>
                             <input type="hidden" name="status" value="Approved">
                             <button type="submit" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px; color: green; border-color: green;">Approve</button>
                         </form>
-                        <form action="<?= base_url('org/examinations/update-application-status/' . $app['id']) ?>" method="POST" style="display:inline-block;">
+                        <form action="<?= base_url('org/examinations/update-application-status/' . ($app['uuid'] ?? $app['id'])) ?>" method="POST" style="display:inline-block;">
                             <?= csrf_field() ?>
                             <input type="hidden" name="status" value="Rejected">
                             <button type="submit" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px; color: red; border-color: red;">Reject</button>

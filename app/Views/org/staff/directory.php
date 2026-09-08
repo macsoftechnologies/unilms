@@ -12,7 +12,7 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>#</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Role</th>
@@ -20,9 +20,9 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($staff as $s): ?>
+                <?php $staffIdx = 1; foreach($staff as $s): ?>
                 <tr>
-                    <td><?= $s['id'] ?></td>
+                    <td><?= $staffIdx++ ?></td>
                     <td><strong><?= esc($s['full_name']) ?></strong></td>
                     <td><?= esc($s['email']) ?></td>
                     <td><span class="badge bg-secondary"><?= ucfirst(esc($s['role'])) ?></span></td>

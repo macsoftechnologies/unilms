@@ -72,7 +72,7 @@
                 <?php if(!empty($students)): foreach($students as $st): ?>
                 <tr>
                     <td>
-                        <a href="<?= base_url('org/students/profile/' . $st['id']) ?>" style="font-weight: 600; color: var(--primary, #4f46e5); text-decoration: none;">
+                        <a href="<?= base_url('org/students/profile/' . ($st['uuid'] ?? $st['id'])) ?>" style="font-weight: 600; color: var(--primary, #4f46e5); text-decoration: none;">
                             <?= esc($st['roll_number']) ?>
                         </a>
                     </td>
@@ -108,10 +108,10 @@
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <a href="<?= base_url('org/students/profile/' . $st['id']) ?>" class="btn-icon" title="View 360 Profile">
+                            <a href="<?= base_url('org/students/profile/' . ($st['uuid'] ?? $st['id'])) ?>" class="btn-icon" title="View 360 Profile">
                                 <i class="fa-solid fa-id-card"></i>
                             </a>
-                            <a href="<?= base_url('org/students/edit/' . $st['id']) ?>" class="btn-icon" title="Edit Student">
+                            <a href="<?= base_url('org/students/edit/' . ($st['uuid'] ?? $st['id'])) ?>" class="btn-icon" title="Edit Student">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
                         </div>

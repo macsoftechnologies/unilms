@@ -12,7 +12,7 @@
     <form action="<?= base_url('org/materials/save') ?>" method="POST" enctype="multipart/form-data">
         <?= csrf_field() ?>
         <?php if($material): ?>
-            <input type="hidden" name="material_id" value="<?= $material['id'] ?>">
+            <input type="hidden" name="material_id" value="<?= esc($material['uuid'] ?? $material['id']) ?>">
         <?php endif; ?>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">

@@ -65,12 +65,13 @@ class LmsMaterials extends BaseController
         $chapterModel = new CreatorChapterModel();
         $lessonModel = new CreatorLessonModel();
 
-        $course = $courseModel->where('status', 'published')->find($courseId);
+        $course = $courseModel->where('status', 'published')->findByIdOrUuid($courseId);
         if (!$course) {
             return redirect()->to('lms/materials')->with('error', 'Course not found or not published.');
         }
+        $realCourseId = $course['id'];
 
-        $chapters = $chapterModel->getChaptersByCourse($courseId);
+        $chapters = $chapterModel->getChaptersByCourse($realCourseId);
         $allLessons = [];
         foreach ($chapters as &$ch) {
             $ch['lessons'] = $lessonModel->getLessonsByChapter($ch['id']);

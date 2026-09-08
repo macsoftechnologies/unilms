@@ -53,7 +53,7 @@
                         <?php endforeach; ?>
                     </div>
 
-                    <form action="<?= base_url('org/quizzes/delete_question/' . $q['id']) ?>" method="POST" style="position: absolute; bottom: 16px; right: 16px;" onsubmit="return confirm('Remove this question?');">
+                    <form action="<?= base_url('org/quizzes/delete_question/' . ($q['uuid'] ?? $q['id'])) ?>" method="POST" style="position: absolute; bottom: 16px; right: 16px;" onsubmit="return confirm('Remove this question?');">
                         <?= csrf_field() ?>
                         <button type="submit" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px; color: var(--danger); border-color: transparent;"><i class="fa-solid fa-trash"></i> Remove</button>
                     </form>
@@ -69,7 +69,7 @@
             
             <form action="<?= base_url('org/quizzes/save_question') ?>" method="POST">
                 <?= csrf_field() ?>
-                <input type="hidden" name="quiz_id" value="<?= $quiz['id'] ?>">
+                <input type="hidden" name="quiz_id" value="<?= esc($quiz['uuid'] ?? $quiz['id']) ?>">
                 
                 <div class="form-group">
                     <label>Question Text</label>

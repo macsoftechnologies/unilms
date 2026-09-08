@@ -77,7 +77,7 @@
                             </td>
                             <td style="padding: 14px 16px; text-align: right;">
                                 <?php if (in_array($e['status'], ['in_progress', 'completed'])): ?>
-                                    <a href="<?= base_url('lms/internships/workspace/' . $e['id']) ?>" class="btn btn-primary" style="font-size: 12px; padding: 6px 14px; border-radius: 10px;">
+                                    <a href="<?= base_url('lms/internships/workspace/' . ($e['uuid'] ?? $e['id'])) ?>" class="btn btn-primary" style="font-size: 12px; padding: 6px 14px; border-radius: 10px;">
                                         Open Workspace <i class="fa-solid fa-arrow-right ms-1"></i>
                                     </a>
                                 <?php elseif ($e['status'] === 'offered'): ?>
@@ -133,7 +133,7 @@
 
                     <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border);">
                         <span style="font-size: 11.5px; color: var(--text-muted);">Deadline: <?= date('d M Y', strtotime($p['application_deadline'])) ?></span>
-                        <a href="<?= base_url('lms/internships/apply/' . $p['id']) ?>" class="btn btn-outline" style="font-size: 12px; padding: 5px 14px; border-radius: 8px;">
+                        <a href="<?= base_url('lms/internships/apply/' . ($p['uuid'] ?? $p['id'])) ?>" class="btn btn-outline" style="font-size: 12px; padding: 5px 14px; border-radius: 8px;">
                             Apply Now
                         </a>
                     </div>

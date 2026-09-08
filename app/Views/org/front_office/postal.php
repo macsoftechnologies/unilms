@@ -64,7 +64,7 @@
                     <td style="font-size: 12px;"><?= date('d/m/Y', strtotime($r['date'])) ?></td>
                     <td style="font-size: 13px;"><?= esc($r['description'] ?: '-') ?></td>
                     <td>
-                        <a href="<?= base_url('org/front-office/postal/delete/' . $r['id']) ?>" class="btn-icon text-danger" onclick="return confirm('Delete this postal record?')" title="Delete">
+                        <a href="<?= base_url('org/front-office/postal/delete/' . ($r['uuid'] ?? $r['id'])) ?>" class="btn-icon text-danger" onclick="return confirm('Delete this postal record?')" title="Delete">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </td>

@@ -85,7 +85,7 @@ Internship Management & TPO Portal
                                     <small class="text-muted d-block">End: <?= esc($p['end_date']) ?></small>
                                 </td>
                                 <td>
-                                    <a href="<?= site_url('org/internships/applications/' . $p['id']) ?>" class="badge bg-info-subtle text-info border border-info px-2 py-1 text-decoration-none">
+                                    <a href="<?= site_url('org/internships/applications/' . ($p['uuid'] ?? $p['id'])) ?>" class="badge bg-info-subtle text-info border border-info px-2 py-1 text-decoration-none">
                                         <i class="fas fa-users me-1"></i> <?= $p['applicant_count'] ?> Applicants
                                     </a>
                                 </td>
@@ -97,10 +97,10 @@ Internship Management & TPO Portal
                                     <?php endif; ?>
                                 </td>
                                 <td class="text-end pe-4">
-                                    <a href="<?= site_url('org/internships/applications/' . $p['id']) ?>" class="btn btn-sm btn-outline-info rounded-circle me-1" title="Review Applications">
+                                    <a href="<?= site_url('org/internships/applications/' . ($p['uuid'] ?? $p['id'])) ?>" class="btn btn-sm btn-outline-info rounded-circle me-1" title="Review Applications">
                                         <i class="fas fa-user-check"></i>
                                     </a>
-                                    <a href="<?= site_url('org/internships/editPosting/' . $p['id']) ?>" class="btn btn-sm btn-outline-primary rounded-circle" title="Edit Posting & Roadmap">
+                                    <a href="<?= site_url('org/internships/editPosting/' . ($p['uuid'] ?? $p['id'])) ?>" class="btn btn-sm btn-outline-primary rounded-circle" title="Edit Posting & Roadmap">
                                         <i class="fas fa-pencil-alt"></i>
                                     </a>
                                 </td>

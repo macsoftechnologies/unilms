@@ -85,13 +85,19 @@ class SuperAdminCreators extends BaseController
             $logModel->logAction(session('admin_id') ?: 1, 'Created Content Creator', "Creator: {$name} ({$email})");
             $msg = 'Content Creator created successfully.';
         } else {
+            $creator = $creatorModel->findByIdOrUuid($id);
+            if (!$creator) {
+                return redirect()->to('superadmin/creators')->with('error', 'Creator not found.');
+            }
+            $realId = $creator['id'];
+
             // Check if email belongs to another creator
-            $existing = $creatorModel->where('email', $email)->where('id !=', $id)->first();
+            $existing = $creatorModel->where('email', $email)->where('id !=', $realId)->first();
             if ($existing) {
                 return redirect()->back()->with('error', 'Email is already taken by another creator.');
             }
 
-            $creatorModel->update($id, $data);
+            $creatorModel->update($realId, $data);
             $logModel->logAction(session('admin_id') ?: 1, 'Updated Content Creator', "Creator: {$name} ({$email})");
             $msg = 'Content Creator updated successfully.';
         }
@@ -104,9 +110,9 @@ class SuperAdminCreators extends BaseController
         $creatorModel = new CreatorUserModel();
         $logModel = new SuperadminActivityLogModel();
 
-        $creator = $creatorModel->find($id);
+        $creator = $creatorModel->findByIdOrUuid($id);
         if ($creator) {
-            $creatorModel->delete($id);
+            $creatorModel->delete($creator['id']);
             $logModel->logAction(session('admin_id') ?: 1, 'Deleted Content Creator', "Creator: {$creator['name']} ({$creator['email']})");
             return redirect()->to('superadmin/creators')->with('success', 'Content Creator removed successfully.');
         }

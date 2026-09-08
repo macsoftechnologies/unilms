@@ -37,8 +37,10 @@ class OrgTimetable extends BaseController
             'name' => $name,
             'description' => $desc
         ]);
+        $newTemplate = $templateModel->find($id);
+        $targetUuid = $newTemplate['uuid'] ?? $id;
 
-        return redirect()->to('org/timetable/periods/' . $id)->with('success', 'Template created. Now set up the periods.');
+        return redirect()->to('org/timetable/periods/' . $targetUuid)->with('success', 'Template created. Now set up the periods.');
     }
 
     public function periods($template_id)
@@ -46,12 +48,13 @@ class OrgTimetable extends BaseController
         if (!$this->hasPermission('manage_academics')) return redirect()->to('org/dashboard');
 
         $templateModel = new TimetableTemplateModel();
-        $template = $templateModel->where('org_id', $this->org_id)->find($template_id);
+        $template = $templateModel->where('org_id', $this->org_id)->findByIdOrUuid($template_id);
         
         if (!$template) return redirect()->to('org/timetable');
+        $realId = $template['id'];
 
         $periodModel = new TimetablePeriodModel();
-        $periods = $periodModel->where('template_id', $template_id)
+        $periods = $periodModel->where('template_id', $realId)
                                ->orderBy('start_time', 'ASC')
                                ->findAll();
 
@@ -66,8 +69,10 @@ class OrgTimetable extends BaseController
         if (!$this->hasPermission('manage_academics')) return redirect()->to('org/dashboard');
 
         $templateModel = new TimetableTemplateModel();
-        $template = $templateModel->where('org_id', $this->org_id)->find($template_id);
+        $template = $templateModel->where('org_id', $this->org_id)->findByIdOrUuid($template_id);
         if (!$template) return redirect()->to('org/timetable');
+        $realId = $template['id'];
+        $targetUuid = $template['uuid'] ?? $realId;
 
         $periodModel = new TimetablePeriodModel();
 
@@ -133,7 +138,7 @@ class OrgTimetable extends BaseController
 
                 $generatedSlots[] = [
                     'org_id'      => $this->org_id,
-                    'template_id' => $template_id,
+                    'template_id' => $realId,
                     'period_name' => "Lunch Break",
                     'start_time'  => $lunchStart,
                     'end_time'    => $lunchEnd,
@@ -148,7 +153,7 @@ class OrgTimetable extends BaseController
             $periodModel->insert($slot);
         }
 
-        return redirect()->to('org/timetable/periods/' . $template_id)->with('success', count($generatedSlots) . ' period and break slots generated successfully!');
+        return redirect()->to('org/timetable/periods/' . $targetUuid)->with('success', count($generatedSlots) . ' period and break slots generated successfully!');
     }
 
     public function savePeriod()
@@ -156,11 +161,14 @@ class OrgTimetable extends BaseController
         if (!$this->hasPermission('manage_academics')) return redirect()->to('org/dashboard');
 
         $periodModel = new TimetablePeriodModel();
+        $templateModel = new TimetableTemplateModel();
         $template_id = $this->request->getPost('template_id');
+        $tpl = $templateModel->findByIdOrUuid($template_id);
+        $realTemplateId = $tpl ? $tpl['id'] : (int)$template_id;
 
         $periodModel->insert([
             'org_id' => $this->org_id,
-            'template_id' => $template_id,
+            'template_id' => $realTemplateId,
             'period_name' => $this->request->getPost('period_name'),
             'start_time' => $this->request->getPost('start_time'),
             'end_time' => $this->request->getPost('end_time'),
@@ -175,9 +183,9 @@ class OrgTimetable extends BaseController
         if (!$this->hasPermission('manage_academics')) return redirect()->to('org/dashboard');
 
         $periodModel = new TimetablePeriodModel();
-        $period = $periodModel->where('org_id', $this->org_id)->find($id);
+        $period = $periodModel->where('org_id', $this->org_id)->findByIdOrUuid($id);
         if ($period) {
-            $periodModel->delete($id);
+            $periodModel->delete($period['id']);
         }
         return redirect()->back()->with('success', 'Period deleted.');
     }

@@ -216,9 +216,10 @@ class ParentApiController extends BaseController
 
         $entries = $db->table('timetable_entries te')
             ->select('te.*, tp.start_time, tp.end_time, s.name as subject_name, s.code as subject_code')
+            ->join('timetable_schedules ts', 'ts.id = te.schedule_id')
             ->join('timetable_periods tp', 'tp.id = te.period_id', 'left')
             ->join('subjects s', 's.id = te.subject_id', 'left')
-            ->where('te.cohort_id', $student['cohort_id'])
+            ->where('ts.cohort_id', $student['cohort_id'])
             ->orderBy('te.day_of_week', 'ASC')
             ->orderBy('tp.start_time', 'ASC')
             ->get()->getResultArray();

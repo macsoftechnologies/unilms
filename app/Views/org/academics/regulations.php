@@ -42,7 +42,7 @@
                         </span>
                     </td>
                     <td>
-                        <a href="<?= base_url('org/academics/regulations/delete/' . $r['id']) ?>" class="btn-icon text-danger" onclick="return confirm('Delete this regulation?')" title="Delete">
+                        <a href="<?= base_url('org/academics/regulations/delete/' . ($r['uuid'] ?? $r['id'])) ?>" class="btn-icon text-danger" onclick="return confirm('Delete this regulation?')" title="Delete">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </td>

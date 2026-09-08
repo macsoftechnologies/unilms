@@ -85,7 +85,9 @@ class OrgObe extends BaseController
             'type' => $this->request->getPost('type')
         ];
 
-        if ($id = $this->request->getPost('po_id')) {
+        if ($poParam = $this->request->getPost('po_id')) {
+            $existing = $poModel->where('org_id', $this->org_id)->findByIdOrUuid($poParam);
+            $id = $existing ? $existing['id'] : $poParam;
             $poModel->update($id, $data);
             $msg = 'Outcome updated successfully.';
         } else {
@@ -100,9 +102,9 @@ class OrgObe extends BaseController
     {
         if (!$this->hasPermission('manage_academics')) return redirect()->to('org/dashboard');
         $poModel = new PoDefinitionModel();
-        $po = $poModel->where('org_id', $this->org_id)->find($id);
+        $po = $poModel->where('org_id', $this->org_id)->findByIdOrUuid($id);
         if ($po) {
-            $poModel->delete($id);
+            $poModel->delete($po['id']);
         }
         return redirect()->back()->with('success', 'Outcome deleted.');
     }
@@ -154,7 +156,9 @@ class OrgObe extends BaseController
             'description' => $this->request->getPost('description')
         ];
 
-        if ($id = $this->request->getPost('co_id')) {
+        if ($coParam = $this->request->getPost('co_id')) {
+            $existing = $coModel->where('org_id', $this->org_id)->findByIdOrUuid($coParam);
+            $id = $existing ? $existing['id'] : $coParam;
             $coModel->update($id, $data);
         } else {
             $coModel->insert($data);
@@ -166,9 +170,9 @@ class OrgObe extends BaseController
     public function deleteCo($id)
     {
         $coModel = new CoDefinitionModel();
-        $co = $coModel->where('org_id', $this->org_id)->find($id);
+        $co = $coModel->where('org_id', $this->org_id)->findByIdOrUuid($id);
         if ($co) {
-            $coModel->delete($id);
+            $coModel->delete($co['id']);
         }
         return redirect()->back()->with('success', 'Outcome deleted.');
     }
@@ -356,7 +360,7 @@ class OrgObe extends BaseController
                 $marks = $db->table('internal_marks m')
                     ->select('m.score, mc.max_marks')
                     ->join('mark_components mc', 'mc.id = m.component_id')
-                    ->join('assessment_co_mappings acm', 'acm.component_id = mc.id')
+                    ->join('assessment_co_mapping acm', 'acm.component_id = mc.id')
                     ->where('acm.co_id', $co['id'])
                     ->where('m.org_id', $this->org_id)
                     ->where('m.score IS NOT NULL', null, false)

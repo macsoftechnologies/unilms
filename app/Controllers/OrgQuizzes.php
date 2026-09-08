@@ -61,7 +61,7 @@ class OrgQuizzes extends BaseController
         if (!$this->hasPermission('manage_academics')) return redirect()->to('org/dashboard');
 
         $quizModel = new QuizModel();
-        $quiz = $quizModel->where('org_id', $this->org_id)->find($id);
+        $quiz = $quizModel->where('org_id', $this->org_id)->findByIdOrUuid($id);
 
         if (!$quiz) {
             return redirect()->to('org/quizzes')->with('error', 'Quiz not found.');
@@ -101,12 +101,21 @@ class OrgQuizzes extends BaseController
         ];
 
         if ($id) {
-            $quizModel->update($id, $data);
-            return redirect()->to('org/quizzes/questions/' . $id)->with('success', 'Quiz settings updated. You can now build questions.');
+            $existing = $quizModel->where('org_id', $this->org_id)->findByIdOrUuid($id);
+            if ($existing) {
+                $quizModel->update($existing['id'], $data);
+                $targetUuid = $existing['uuid'] ?? $existing['id'];
+            } else {
+                $quizModel->update($id, $data);
+                $targetUuid = $id;
+            }
+            return redirect()->to('org/quizzes/questions/' . $targetUuid)->with('success', 'Quiz settings updated. You can now build questions.');
         } else {
             $data['faculty_user_id'] = $this->org_user_id;
             $new_id = $quizModel->insert($data);
-            return redirect()->to('org/quizzes/questions/' . $new_id)->with('success', 'Quiz created successfully. Start adding questions.');
+            $newQuiz = $quizModel->find($new_id);
+            $targetUuid = $newQuiz['uuid'] ?? $new_id;
+            return redirect()->to('org/quizzes/questions/' . $targetUuid)->with('success', 'Quiz created successfully. Start adding questions.');
         }
     }
 
@@ -115,9 +124,9 @@ class OrgQuizzes extends BaseController
         if (!$this->hasPermission('manage_academics')) return redirect()->to('org/dashboard');
         
         $quizModel = new QuizModel();
-        $quiz = $quizModel->where('org_id', $this->org_id)->find($id);
+        $quiz = $quizModel->where('org_id', $this->org_id)->findByIdOrUuid($id);
         if ($quiz) {
-            $quizModel->delete($id);
+            $quizModel->delete($quiz['id']);
         }
         return redirect()->to('org/quizzes')->with('success', 'Quiz deleted.');
     }
@@ -129,14 +138,15 @@ class OrgQuizzes extends BaseController
         if (!$this->hasPermission('manage_academics')) return redirect()->to('org/dashboard');
 
         $quizModel = new QuizModel();
-        $quiz = $quizModel->where('org_id', $this->org_id)->find($quiz_id);
+        $quiz = $quizModel->where('org_id', $this->org_id)->findByIdOrUuid($quiz_id);
 
         if (!$quiz) return redirect()->to('org/quizzes');
+        $realQuizId = $quiz['id'];
 
         $questionModel = new QuizQuestionModel();
         $optionModel = new QuizOptionModel();
 
-        $questions = $questionModel->where('quiz_id', $quiz_id)->orderBy('order_index', 'ASC')->findAll();
+        $questions = $questionModel->where('quiz_id', $realQuizId)->orderBy('order_index', 'ASC')->findAll();
         
         foreach($questions as &$q) {
             $q['options'] = $optionModel->where('question_id', $q['id'])->orderBy('order_index', 'ASC')->findAll();
@@ -153,6 +163,11 @@ class OrgQuizzes extends BaseController
         if (!$this->hasPermission('manage_academics')) return redirect()->to('org/dashboard');
 
         $quiz_id = $this->request->getPost('quiz_id');
+        $quizModel = new QuizModel();
+        $quiz = $quizModel->where('org_id', $this->org_id)->findByIdOrUuid($quiz_id);
+        $realQuizId = $quiz ? $quiz['id'] : (int)$quiz_id;
+        $targetUuid = $quiz ? ($quiz['uuid'] ?? $quiz['id']) : $quiz_id;
+
         $question_text = $this->request->getPost('question_text');
         $marks = $this->request->getPost('marks');
         $options = $this->request->getPost('options'); // array of texts
@@ -163,11 +178,11 @@ class OrgQuizzes extends BaseController
 
         $q_id = $questionModel->insert([
             'org_id' => $this->org_id,
-            'quiz_id' => $quiz_id,
+            'quiz_id' => $realQuizId,
             'question_text' => $question_text,
             'question_type' => 'mcq',
             'marks' => $marks,
-            'order_index' => $questionModel->where('quiz_id', $quiz_id)->countAllResults() + 1
+            'order_index' => $questionModel->where('quiz_id', $realQuizId)->countAllResults() + 1
         ]);
 
         if (is_array($options)) {
@@ -184,7 +199,7 @@ class OrgQuizzes extends BaseController
             }
         }
 
-        return redirect()->to('org/quizzes/questions/' . $quiz_id)->with('success', 'Question added.');
+        return redirect()->to('org/quizzes/questions/' . $targetUuid)->with('success', 'Question added.');
     }
 
     public function deleteQuestion($id)
@@ -192,9 +207,9 @@ class OrgQuizzes extends BaseController
         if (!$this->hasPermission('manage_academics')) return redirect()->to('org/dashboard');
 
         $questionModel = new QuizQuestionModel();
-        $q = $questionModel->where('org_id', $this->org_id)->find($id);
+        $q = $questionModel->where('org_id', $this->org_id)->findByIdOrUuid($id);
         if ($q) {
-            $questionModel->delete($id);
+            $questionModel->delete($q['id']);
             return redirect()->back()->with('success', 'Question removed.');
         }
         return redirect()->back();
@@ -207,9 +222,10 @@ class OrgQuizzes extends BaseController
         if (!$this->hasPermission('manage_academics')) return redirect()->to('org/dashboard');
 
         $quizModel = new QuizModel();
-        $quiz = $quizModel->where('org_id', $this->org_id)->find($quiz_id);
+        $quiz = $quizModel->where('org_id', $this->org_id)->findByIdOrUuid($quiz_id);
 
         if (!$quiz) return redirect()->to('org/quizzes');
+        $realQuizId = $quiz['id'];
 
         $subjectModel = new SubjectModel();
         $cohortModel = new CohortModel();
@@ -223,7 +239,7 @@ class OrgQuizzes extends BaseController
                        ->select('a.*, s.roll_number, s.first_name, s.last_name')
                        ->join('students s', 's.id = a.student_id')
                        ->where('a.org_id', $this->org_id)
-                       ->where('a.quiz_id', $quiz_id)
+                       ->where('a.quiz_id', $realQuizId)
                        ->orderBy('a.start_time', 'DESC')
                        ->get()->getResultArray();
 

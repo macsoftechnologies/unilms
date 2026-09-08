@@ -28,7 +28,7 @@
                     <td><?= esc($c['certificate_type']) ?></td>
                     <td><?= esc($c['issue_date']) ?></td>
                     <td>
-                        <a href="<?= base_url('org/staff/generate_pdf/'.$c['id']) ?>" target="_blank" class="btn btn-sm btn-outline-danger">
+                        <a href="<?= base_url('org/staff/generate_pdf/' . ($c['uuid'] ?? $c['id'])) ?>" target="_blank" class="btn btn-sm btn-outline-danger">
                             <i class="fa-solid fa-file-pdf"></i> Download PDF
                         </a>
                     </td>

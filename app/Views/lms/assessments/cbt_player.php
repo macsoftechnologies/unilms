@@ -62,7 +62,7 @@ CBT Quiz - <?= esc($assessment['title']) ?>
             </div>
         </div>
     <?php else: ?>
-        <form action="<?= site_url('lms/assessments/submit/' . $assessment['id']) ?>" method="POST" id="quizForm">
+        <form action="<?= site_url('lms/assessments/submit/' . ($assessment['uuid'] ?? $assessment['id'])) ?>" method="POST" id="quizForm">
             <?= csrf_field() ?>
             
             <div style="display: flex; flex-direction: column; gap: 20px;">

@@ -198,7 +198,7 @@
                                         <button type="button" class="btn-icon" style="background: none; border: 1px solid var(--border-color); border-radius: 6px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: #7C3AED; cursor: pointer;" onclick="editOutcome(<?= htmlspecialchars(json_encode($po), ENT_QUOTES, 'UTF-8') ?>)" title="Edit Outcome">
                                             <i class="fa-solid fa-pen" style="font-size: 12px;"></i>
                                         </button>
-                                        <form action="<?= base_url('org/obe/po/delete/'.$po['id']) ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete outcome <?= esc($po['code']) ?>?');" style="display: inline;">
+                                        <form action="<?= base_url('org/obe/po/delete/' . ($po['uuid'] ?? $po['id'])) ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete outcome <?= esc($po['code']) ?>?');" style="display: inline;">
                                             <?= csrf_field() ?>
                                             <button type="submit" class="btn-icon text-danger" style="background: none; border: 1px solid var(--border-color); border-radius: 6px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer;" title="Delete Outcome">
                                                 <i class="fa-solid fa-trash" style="font-size: 12px;"></i>
@@ -347,7 +347,7 @@ function openAddOutcomeModal() {
 
 function editOutcome(po) {
     document.getElementById('formHeading').innerText = 'Edit Outcome (' + po.code + ')';
-    document.getElementById('form_po_id').value = po.id;
+    document.getElementById('form_po_id').value = po.uuid || po.id;
     document.getElementById('form_type').value = po.type;
     document.getElementById('form_code').value = po.code;
     document.getElementById('form_description').value = po.description;

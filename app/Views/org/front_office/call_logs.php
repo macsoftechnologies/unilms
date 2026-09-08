@@ -73,7 +73,7 @@
                     </td>
                     <td style="font-size: 12px; color: var(--text-muted);"><?= date('d M, H:i', strtotime($c['created_at'])) ?></td>
                     <td>
-                        <a href="<?= base_url('org/front-office/calls/delete/' . $c['id']) ?>" class="btn-icon text-danger" onclick="return confirm('Delete this call log?')" title="Delete">
+                        <a href="<?= base_url('org/front-office/calls/delete/' . ($c['uuid'] ?? $c['id'])) ?>" class="btn-icon text-danger" onclick="return confirm('Delete this call log?')" title="Delete">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </td>

@@ -56,7 +56,7 @@
                         <td><strong><?= esc($co['code']) ?></strong></td>
                         <td><?= esc($co['description']) ?></td>
                         <td>
-                            <form action="<?= base_url('org/obe/co/delete/'.$co['id']) ?>" method="POST" onsubmit="return confirm('Delete this outcome?');">
+                            <form action="<?= base_url('org/obe/co/delete/' . ($co['uuid'] ?? $co['id'])) ?>" method="POST" onsubmit="return confirm('Delete this outcome?');">
                                 <?= csrf_field() ?>
                                 <button class="btn btn-outline" style="padding: 4px 10px; color: var(--danger); border-color: rgba(238,93,80,0.2);"><i class="fa-solid fa-trash"></i></button>
                             </form>

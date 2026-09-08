@@ -84,12 +84,12 @@ Assessments & Tests
                                 <span style="font-weight: 800; color: var(--primary); margin-left: 4px; font-size: 13px;"><?= esc($score) ?>/<?= esc($a['max_marks'] ?? 100) ?></span>
                             <?php endif; ?>
                         </div>
-                        <a href="<?= site_url('lms/assessments/view/' . $a['id']) ?>" class="btn btn-sm btn-outline" style="font-weight: 700;">
+                        <a href="<?= site_url('lms/assessments/view/' . ($a['uuid'] ?? $a['id'])) ?>" class="btn btn-sm btn-outline" style="font-weight: 700;">
                             View Result
                         </a>
                     <?php else: ?>
                         <span class="badge" style="background: var(--bg-canvas); color: var(--text-muted); font-weight: 600;">Not Attempted</span>
-                        <a href="<?= site_url('lms/assessments/view/' . $a['id']) ?>" class="btn btn-sm btn-primary" style="font-weight: 700;">
+                        <a href="<?= site_url('lms/assessments/view/' . ($a['uuid'] ?? $a['id'])) ?>" class="btn btn-sm btn-primary" style="font-weight: 700;">
                             Start Assessment <i class="fa-solid fa-arrow-right ms-1"></i>
                         </a>
                     <?php endif; ?>

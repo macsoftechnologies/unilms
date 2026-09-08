@@ -76,9 +76,14 @@ class LmsAuthFilter implements FilterInterface
             return redirect()->to('/lms/login')->with('error', 'Your institution\'s account is currently inactive. Please contact your administration.');
         }
 
-        if (!$org['lms_enabled']) {
-            $session->destroy();
-            return redirect()->to('/lms/login')->with('error', 'The Learning Management System is currently disabled for your institution.');
+        // Always sync organization toggle in session
+        $session->set('lms_enabled', (int)($org['lms_enabled'] ?? 0));
+        $session->set('cms_enabled', (int)($org['cms_enabled'] ?? 0));
+
+        // If trying to access LMS learning hub/materials when LMS toggle is off, redirect to portal dashboard
+        $uriPath = trim($request->getUri()->getPath(), '/');
+        if (!$org['lms_enabled'] && (strpos($uriPath, 'lms/learn') !== false || strpos($uriPath, 'lms/materials') !== false)) {
+            return redirect()->to(base_url('lms/dashboard'))->with('error', 'The Learning Management System is not enabled for your institution.');
         }
         
         $currentDate = date('Y-m-d');

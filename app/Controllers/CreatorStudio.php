@@ -21,7 +21,7 @@ class CreatorStudio extends BaseController
     protected function getCourseForCreator($courseId)
     {
         $courseModel = new CreatorCourseModel();
-        $course = $courseModel->find($courseId);
+        $course = $courseModel->findByIdOrUuid($courseId);
         if (!$course) {
             return null;
         }
@@ -174,16 +174,18 @@ class CreatorStudio extends BaseController
             if (!$existing) {
                 return redirect()->to('/creator/courses')->with('error', 'Unauthorized or course not found.');
             }
-            $courseModel->update($id, $data);
-            $courseId = $id;
+            $courseModel->update($existing['id'], $data);
+            $courseUuid = $existing['uuid'] ?? $existing['id'];
             $msg = 'Course information updated.';
         } else {
             $data['status'] = 'draft';
-            $courseId = $courseModel->insert($data);
+            $insertedId = $courseModel->insert($data);
+            $newCourse = $courseModel->find($insertedId);
+            $courseUuid = $newCourse['uuid'] ?? $insertedId;
             $msg = 'Course created! Now build your chapters and video lessons in the Studio.';
         }
 
-        return redirect()->to('/creator/courses/builder/' . $courseId)->with('success', $msg);
+        return redirect()->to('/creator/courses/builder/' . $courseUuid)->with('success', $msg);
     }
 
     // Screen 2: Course & Video Upload Studio Builder
@@ -197,7 +199,7 @@ class CreatorStudio extends BaseController
         $chapterModel = new CreatorChapterModel();
         $lessonModel = new CreatorLessonModel();
 
-        $chapters = $chapterModel->getChaptersByCourse($courseId);
+        $chapters = $chapterModel->getChaptersByCourse($course['id']);
         foreach ($chapters as &$ch) {
             $ch['lessons'] = $lessonModel->getLessonsByChapter($ch['id']);
         }
@@ -221,35 +223,40 @@ class CreatorStudio extends BaseController
         $chapterId = $this->request->getPost('chapter_id');
 
         $data = [
-            'course_id'     => $courseId,
+            'course_id'     => $course['id'],
             'chapter_title' => trim($this->request->getPost('chapter_title')),
             'description'   => trim($this->request->getPost('description') ?: ''),
             'order_seq'     => (int)$this->request->getPost('order_seq')
         ];
 
         if ($chapterId) {
-            $chapterModel->update($chapterId, $data);
+            $existingChapter = $chapterModel->findByIdOrUuid($chapterId);
+            if ($existingChapter) {
+                $chapterModel->update($existingChapter['id'], $data);
+            } else {
+                $chapterModel->update($chapterId, $data);
+            }
             $msg = 'Chapter updated.';
         } else {
             $chapterModel->insert($data);
             $msg = 'New Chapter added to course.';
         }
 
-        return redirect()->to('/creator/courses/builder/' . $courseId)->with('success', $msg);
+        return redirect()->to('/creator/courses/builder/' . ($course['uuid'] ?? $course['id']))->with('success', $msg);
     }
 
     public function deleteChapter($chapterId)
     {
         $chapterModel = new CreatorChapterModel();
         $lessonModel = new CreatorLessonModel();
-        $chapter = $chapterModel->find($chapterId);
+        $chapter = $chapterModel->findByIdOrUuid($chapterId);
 
         if ($chapter) {
             $course = $this->getCourseForCreator($chapter['course_id']);
             if ($course) {
-                $lessonModel->where('chapter_id', $chapterId)->delete();
-                $chapterModel->delete($chapterId);
-                return redirect()->to('/creator/courses/builder/' . $course['id'])->with('success', 'Chapter and its lessons deleted.');
+                $lessonModel->where('chapter_id', $chapter['id'])->delete();
+                $chapterModel->delete($chapter['id']);
+                return redirect()->to('/creator/courses/builder/' . ($course['uuid'] ?? $course['id']))->with('success', 'Chapter and its lessons deleted.');
             }
         }
 
@@ -269,9 +276,12 @@ class CreatorStudio extends BaseController
         $lessonModel = new CreatorLessonModel();
         $lessonId = $this->request->getPost('lesson_id');
 
+        $chapter = (new CreatorChapterModel())->findByIdOrUuid($this->request->getPost('chapter_id'));
+        $realChapterId = $chapter ? $chapter['id'] : (int)$this->request->getPost('chapter_id');
+
         $data = [
-            'course_id'        => $courseId,
-            'chapter_id'       => (int)$this->request->getPost('chapter_id'),
+            'course_id'        => $course['id'],
+            'chapter_id'       => $realChapterId,
             'lesson_title'     => trim($this->request->getPost('lesson_title')),
             'video_type'       => $this->request->getPost('video_type') ?: 'url',
             'video_url'        => trim($this->request->getPost('video_url') ?: ''),
@@ -330,7 +340,12 @@ class CreatorStudio extends BaseController
         }
 
         if ($lessonId) {
-            $lessonModel->update($lessonId, $data);
+            $existingLesson = $lessonModel->findByIdOrUuid($lessonId);
+            if ($existingLesson) {
+                $lessonModel->update($existingLesson['id'], $data);
+            } else {
+                $lessonModel->update($lessonId, $data);
+            }
             $msg = 'Lesson updated.';
         } else {
             $lessonModel->insert($data);
@@ -339,22 +354,22 @@ class CreatorStudio extends BaseController
 
         // Recalculate total course duration
         $db = \Config\Database::connect();
-        $totalMins = $db->table('creator_lessons')->where('course_id', $courseId)->selectSum('duration_minutes')->get()->getRow()->duration_minutes ?? 0;
-        $courseModel->update($courseId, ['total_duration_minutes' => (int)$totalMins]);
+        $totalMins = $db->table('creator_lessons')->where('course_id', $course['id'])->selectSum('duration_minutes')->get()->getRow()->duration_minutes ?? 0;
+        $courseModel->update($course['id'], ['total_duration_minutes' => (int)$totalMins]);
 
-        return redirect()->to('/creator/courses/builder/' . $courseId)->with('success', $msg);
+        return redirect()->to('/creator/courses/builder/' . ($course['uuid'] ?? $course['id']))->with('success', $msg);
     }
 
     public function deleteLesson($lessonId)
     {
         $lessonModel = new CreatorLessonModel();
-        $lesson = $lessonModel->find($lessonId);
+        $lesson = $lessonModel->findByIdOrUuid($lessonId);
 
         if ($lesson) {
             $course = $this->getCourseForCreator($lesson['course_id']);
             if ($course) {
-                $lessonModel->delete($lessonId);
-                return redirect()->to('/creator/courses/builder/' . $course['id'])->with('success', 'Lesson removed.');
+                $lessonModel->delete($lesson['id']);
+                return redirect()->to('/creator/courses/builder/' . ($course['uuid'] ?? $course['id']))->with('success', 'Lesson removed.');
             }
         }
 

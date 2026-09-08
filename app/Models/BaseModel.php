@@ -13,9 +13,59 @@ class BaseModel extends Model
         if (!in_array('setCreatedBy', $this->beforeInsert)) {
             $this->beforeInsert[] = 'setCreatedBy';
         }
+        if (!in_array('setUuid', $this->beforeInsert)) {
+            $this->beforeInsert[] = 'setUuid';
+        }
         if (!in_array('setUpdatedBy', $this->beforeUpdate)) {
             $this->beforeUpdate[] = 'setUpdatedBy';
         }
+    }
+
+    protected function setUuid(array $data)
+    {
+        if (isset($data['data'])) {
+            try {
+                $fields = $this->db->getFieldNames($this->table);
+                if (in_array('uuid', $fields)) {
+                    if (!in_array('uuid', $this->allowedFields)) {
+                        $this->allowedFields[] = 'uuid';
+                    }
+                    if (empty($data['data']['uuid'])) {
+                        $data['data']['uuid'] = uuid_v7();
+                    }
+                }
+            } catch (\Throwable $e) {}
+        }
+        return $data;
+    }
+
+    /**
+     * Find a record strictly by its UUID v7.
+     * Rejects numeric / sequential IDs to prevent enumeration attacks.
+     *
+     * @param string $uuid
+     * @return array|object|null
+     */
+    public function findByUuid(string $uuid)
+    {
+        if (!is_uuid($uuid)) {
+            return null;
+        }
+        return $this->where($this->table . '.uuid', $uuid)->first();
+    }
+
+    /**
+     * Resolve record strictly by UUID. Rejects sequential numbers to prevent IDOR/enumeration.
+     *
+     * @param string $identifier
+     * @return array|object|null
+     */
+    public function findByIdOrUuid($identifier)
+    {
+        if (!is_uuid($identifier)) {
+            return null;
+        }
+        return $this->where($this->table . '.uuid', $identifier)->first();
     }
 
     protected function setCreatedBy(array $data)

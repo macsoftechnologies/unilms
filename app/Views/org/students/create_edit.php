@@ -9,7 +9,7 @@
             <p style="margin: 4px 0 0; color: var(--text-muted); font-size: 13px;">Enter student master academic credentials and biographical profile.</p>
         </div>
         <div>
-            <a href="<?= base_url('org/students' . ($student ? '/profile/' . $student['id'] : '')) ?>" class="btn btn-outline">
+            <a href="<?= base_url('org/students' . ($student ? '/profile/' . ($student['uuid'] ?? $student['id']) : '')) ?>" class="btn btn-outline">
                 <i class="fa-solid fa-arrow-left"></i> Back
             </a>
         </div>

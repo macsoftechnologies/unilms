@@ -8,7 +8,7 @@
         Fee Structures Hub
     </a>
     <span style="color: var(--text-secondary);">/</span>
-    <a href="<?= base_url('org/fee-config/program/' . $program['id']) ?>" style="color: #7C3AED; text-decoration: none; font-weight: 600;">
+    <a href="<?= base_url('org/fee-config/program/' . ($program['uuid'] ?? $program['id'])) ?>" style="color: #7C3AED; text-decoration: none; font-weight: 600;">
         <?= esc($program['name']) ?>
     </a>
     <span style="color: var(--text-secondary);">/</span>

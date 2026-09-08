@@ -107,7 +107,7 @@
                             ?>
                         </td>
                         <td>
-                            <form action="<?= base_url('org/marks/components/delete/'.$comp['id']) ?>" method="POST" onsubmit="return confirm('Delete this component? All associated marks will be lost.');">
+                            <form action="<?= base_url('org/marks/components/delete/' . ($comp['uuid'] ?? $comp['id'])) ?>" method="POST" onsubmit="return confirm('Delete this component? All associated marks will be lost.');">
                                 <?= csrf_field() ?>
                                 <button class="btn btn-outline" style="padding: 4px 10px; color: var(--danger); border-color: rgba(238,93,80,0.2);"><i class="fa-solid fa-trash"></i></button>
                             </form>

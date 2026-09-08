@@ -77,7 +77,7 @@
                                 <i class="fa-solid fa-pen"></i>
                             </button>
                             <!-- Delete Cohort -->
-                            <a href="<?= base_url('org/academics/cohorts/delete/'.$c['id']) ?>" class="btn-icon text-danger" onclick="return confirm('Are you sure you want to delete this cohort? Blocks if students enrolled.')" title="Delete Batch" style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: none; color: #DC2626; cursor: pointer;">
+                            <a href="<?= base_url('org/academics/cohorts/delete/' . ($c['uuid'] ?? $c['id'])) ?>" class="btn-icon text-danger" onclick="return confirm('Are you sure you want to delete this cohort? Blocks if students enrolled.')" title="Delete Batch" style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: none; color: #DC2626; cursor: pointer;">
                                 <i class="fa-solid fa-trash"></i>
                             </a>
                         </div>

@@ -12,7 +12,7 @@
     <!-- Student Selector -->
     <div style="display: flex; gap: 12px; margin-bottom: 24px;">
         <?php foreach($students as $s): ?>
-            <a href="<?= base_url('parent/dashboard/select_student/'.$s['id']) ?>" 
+            <a href="<?= base_url('parent/dashboard/select_student/' . ($s['uuid'] ?? $s['id'])) ?>" 
                style="text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 500; 
                       <?= $s['id'] == $selected_student['id'] ? 'background: var(--primary); color: white;' : 'background: white; color: var(--text-main); border: 1px solid var(--border-color);' ?>">
                 <?= esc($s['first_name']) ?> <?= esc($s['last_name']) ?>

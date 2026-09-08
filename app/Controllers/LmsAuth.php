@@ -90,7 +90,9 @@ class LmsAuth extends BaseController
                 'program_name'       => $student['program_name'] ?? 'B.Tech Computer Science & Engineering',
                 'program_code'       => $student['program_short'] ?? 'B.Tech CSE',
                 'semester_name'      => $student['semester_name'] ?? 'Semester 1',
-                'academic_year_name' => $student['academic_year_name'] ?? '2026-2027'
+                'academic_year_name' => $student['academic_year_name'] ?? '2026-2027',
+                'lms_enabled'        => $org['lms_enabled'] ?? 0,
+                'cms_enabled'        => $org['cms_enabled'] ?? 0,
             ];
             
             session()->set($sessionData);

@@ -75,7 +75,7 @@
                         <?php endif; ?>
                     </td>
                     <td>
-                        <a href="<?= base_url('org/examinations/print-hall-ticket/' . $ht['id']) ?>" target="_blank" class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px; text-decoration: none; display: inline-block;">Print PDF</a>
+                        <a href="<?= base_url('org/examinations/print-hall-ticket/' . ($ht['uuid'] ?? $ht['id'])) ?>" target="_blank" class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px; text-decoration: none; display: inline-block;">Print PDF</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

@@ -89,13 +89,13 @@
                 
                 <div style="margin-top: auto;">
                     <?php if(!empty($q['has_active_attempt'])): ?>
-                        <a href="<?= base_url('lms/quizzes/exam/' . $q['active_attempt_id']) ?>" class="btn btn-primary" style="width: 100%; justify-content: center; background: #f59e0b; border-color: #f59e0b; font-weight: 700;">
+                        <a href="<?= base_url('lms/quizzes/exam/' . ($q['active_attempt_uuid'] ?? $q['active_attempt_id'])) ?>" class="btn btn-primary" style="width: 100%; justify-content: center; background: #f59e0b; border-color: #f59e0b; font-weight: 700;">
                             <i class="fa-solid fa-play me-1"></i> Resume Exam
                         </a>
                     <?php elseif(!empty($q['can_attempt'])): ?>
-                        <a href="<?= base_url('lms/quizzes/start/' . $q['id']) ?>" class="btn btn-primary" style="width: 100%; justify-content: center; font-weight: 700;" onclick="return confirm('Ready to start the exam? The timer will begin immediately.');">
+                        <button type="button" class="btn btn-primary" style="width: 100%; justify-content: center; font-weight: 700;" onclick="promptStartExam('<?= esc($q['title'], 'js') ?>', '<?= $timeLimit > 0 ? $timeLimit . ' Minutes' : 'Unlimited' ?>', '<?= $attemptCount + 1 ?> of <?= $maxAttempts ?>', '<?= base_url('lms/quizzes/start/' . ($q['uuid'] ?? $q['id'])) ?>')">
                             <i class="fa-solid fa-pen-nib me-1"></i> Start Exam
-                        </a>
+                        </button>
                     <?php else: ?>
                         <button class="btn btn-outline" style="width: 100%; justify-content: center; opacity: 0.6; cursor: not-allowed; font-weight: 600;" disabled>
                             <i class="fa-solid fa-ban me-1"></i> Max Attempts Reached
@@ -106,5 +106,69 @@
         <?php endforeach; ?>
     </div>
 <?php endif; ?>
+
+<!-- CBT Exam Start Confirmation Modal -->
+<div id="cbtStartModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(6px); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: var(--surface); border-radius: 20px; padding: 28px; width: 100%; max-width: 460px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); border: 1px solid var(--border); animation: modalFade 0.2s ease;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px;">
+            <div style="width: 50px; height: 50px; border-radius: 14px; background: rgba(99, 102, 241, 0.12); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">
+                <i class="fa-solid fa-laptop-code"></i>
+            </div>
+            <div>
+                <h3 id="cbtModalTitle" style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; margin: 0; color: var(--text-main); line-height: 1.3;">Start Online Exam</h3>
+                <span style="font-size: 12px; color: var(--text-muted);">Computer-Based Test (CBT) Session</span>
+            </div>
+        </div>
+
+        <div style="background: var(--bg-canvas); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+                <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Duration</div>
+                <div id="cbtModalDuration" style="font-size: 14px; font-weight: 800; color: var(--text-main); margin-top: 2px;">--</div>
+            </div>
+            <div>
+                <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Attempt</div>
+                <div id="cbtModalAttempt" style="font-size: 14px; font-weight: 800; color: var(--text-main); margin-top: 2px;">--</div>
+            </div>
+        </div>
+
+        <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 10px; padding: 12px; margin-bottom: 22px; font-size: 12.5px; color: #b45309; line-height: 1.45; display: flex; gap: 10px; align-items: flex-start;">
+            <i class="fa-solid fa-triangle-exclamation" style="margin-top: 2px; flex-shrink: 0;"></i>
+            <span>Once you begin, the timer will start immediately. Do not refresh or close the exam window during the test.</span>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+            <button type="button" onclick="closeStartModal()" class="btn btn-outline" style="flex: 1; justify-content: center; font-weight: 600;">
+                Cancel
+            </button>
+            <a id="cbtModalStartBtn" href="#" class="btn btn-primary" style="flex: 1.4; justify-content: center; font-weight: 800; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
+                <i class="fa-solid fa-play me-1"></i> Begin Test Now
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+function promptStartExam(title, duration, attemptInfo, url) {
+    document.getElementById('cbtModalTitle').innerText = title;
+    document.getElementById('cbtModalDuration').innerText = duration;
+    document.getElementById('cbtModalAttempt').innerText = attemptInfo;
+    document.getElementById('cbtModalStartBtn').setAttribute('href', url);
+    
+    const modal = document.getElementById('cbtStartModal');
+    modal.style.display = 'flex';
+}
+
+function closeStartModal() {
+    document.getElementById('cbtStartModal').style.display = 'none';
+}
+
+// Close on backdrop click
+window.addEventListener('click', function(e) {
+    const modal = document.getElementById('cbtStartModal');
+    if (e.target === modal) {
+        closeStartModal();
+    }
+});
+</script>
 
 <?= $this->endSection() ?>

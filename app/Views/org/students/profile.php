@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div style="display: flex; gap: 8px;">
-                <a href="<?= base_url('org/students/edit/' . $student['id']) ?>" class="btn btn-primary"><i class="fa-solid fa-pen"></i> Edit Profile</a>
+                <a href="<?= base_url('org/students/edit/' . ($student['uuid'] ?? $student['id'])) ?>" class="btn btn-primary"><i class="fa-solid fa-pen"></i> Edit Profile</a>
                 <a href="<?= base_url('org/students') ?>" class="btn btn-outline"><i class="fa-solid fa-arrow-left"></i> Back</a>
             </div>
         </div>
@@ -143,7 +143,7 @@
                             <i class="fa-regular fa-envelope me-1"></i> <?= esc($p['email']) ?> | <i class="fa-solid fa-phone me-1"></i> <?= esc($p['phone']) ?>
                         </div>
                     </div>
-                    <a href="<?= base_url('org/students/unlink-parent/' . $p['id']) ?>" class="btn-icon text-danger" onclick="return confirm('Unlink this parent?')"><i class="fa-solid fa-unlink"></i></a>
+                    <a href="<?= base_url('org/students/unlink-parent/' . ($p['uuid'] ?? $p['id'])) ?>" class="btn-icon text-danger" onclick="return confirm('Unlink this parent?')"><i class="fa-solid fa-unlink"></i></a>
                 </div>
                 <?php endforeach; ?>
             <?php else: ?>

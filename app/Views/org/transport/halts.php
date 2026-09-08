@@ -34,7 +34,7 @@
                     <td style="font-weight: 600; color: var(--success);">₹<?= number_format($h['annual_fee'], 2) ?></td>
                     <td>
                         <button class="btn btn-outline" style="padding: 4px 8px; font-size: 12px;" onclick="editHalt(<?= htmlspecialchars(json_encode($h)) ?>)">Edit</button>
-                        <a href="<?= base_url('org/transport/delete_halt/'.$h['id']) ?>" class="btn btn-outline" style="padding: 4px 8px; font-size: 12px; color: var(--danger); border-color: var(--danger);" onclick="return confirm('Delete this halt?')">Del</a>
+                        <a href="<?= base_url('org/transport/delete_halt/' . ($h['uuid'] ?? $h['id'])) ?>" class="btn btn-outline" style="padding: 4px 8px; font-size: 12px; color: var(--danger); border-color: var(--danger);" onclick="return confirm('Delete this halt?')">Del</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

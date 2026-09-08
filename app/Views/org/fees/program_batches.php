@@ -77,7 +77,7 @@
                                             ₹ <?= number_format((float)$semPkg['total_amount'], 2) ?>
                                         </strong>
                                     </div>
-                                    <a href="<?= base_url('org/fee-config/semester-plan/' . $program['id'] . '/' . $semPkg['semester_id'] . '/' . $semPkg['academic_year_id']) ?>" class="btn btn-outline" style="padding: 7px 12px; font-size: 12.5px; font-weight: 700; border-radius: 7px; text-decoration: none; border: 1px solid rgba(124, 58, 237, 0.3); color: #7C3AED; background: #fff; display: inline-flex; align-items: center; gap: 6px;">
+                                    <a href="<?= base_url('org/fee-config/semester-plan/' . ($program['uuid'] ?? $program['id']) . '/' . $semPkg['semester_id'] . '/' . $semPkg['academic_year_id']) ?>" class="btn btn-outline" style="padding: 7px 12px; font-size: 12.5px; font-weight: 700; border-radius: 7px; text-decoration: none; border: 1px solid rgba(124, 58, 237, 0.3); color: #7C3AED; background: #fff; display: inline-flex; align-items: center; gap: 6px;">
                                         <i class="fa-solid fa-arrow-right"></i> Open Plan
                                     </a>
                                 </div>

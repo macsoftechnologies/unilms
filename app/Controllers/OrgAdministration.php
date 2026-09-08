@@ -22,7 +22,7 @@ class OrgAdministration extends BaseController
     public function college_details()
     {
         $model = new CollegeDetailsModel();
-        $data['details'] = $model->where('org_id', session('org_id'))->first();
+        $data['details'] = $model->where('org_id', session('org_id'))->first() ?: [];
         return view('org/administration/college_details', $data);
     }
 
@@ -142,7 +142,13 @@ class OrgAdministration extends BaseController
             if (empty($id)) {
                 $db->table('lecture_halls')->insert($data);
             } else {
-                $db->table('lecture_halls')->where('id', $id)->where('org_id', $orgId)->update($data);
+                $builder = $db->table('lecture_halls')->where('org_id', $orgId);
+                if (is_uuid($id)) {
+                    $builder->where('uuid', $id);
+                } else {
+                    $builder->where('id', $id);
+                }
+                $builder->update($data);
             }
 
             return redirect()->to(base_url('org/administration/lecture-halls'))->with('success', 'Classroom / Laboratory saved successfully.');
@@ -156,7 +162,13 @@ class OrgAdministration extends BaseController
     {
         $orgId = session('org_id') ?: 5;
         $db = \Config\Database::connect();
-        $db->table('lecture_halls')->where('id', $id)->where('org_id', $orgId)->delete();
+        $builder = $db->table('lecture_halls')->where('org_id', $orgId);
+        if (is_uuid($id)) {
+            $builder->where('uuid', $id);
+        } else {
+            $builder->where('id', $id);
+        }
+        $builder->delete();
         return redirect()->to(base_url('org/administration/lecture-halls'))->with('success', 'Lecture hall deleted successfully.');
     }
 

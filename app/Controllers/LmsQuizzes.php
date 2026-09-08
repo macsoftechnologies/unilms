@@ -56,7 +56,8 @@ class LmsQuizzes extends BaseController
             foreach($attempts as $a) {
                 if (($a['status'] ?? '') === 'in_progress') {
                     $q['has_active_attempt'] = true;
-                    $q['active_attempt_id'] = $a['id'];
+                    $q['active_attempt_id'] = !empty($a['uuid']) ? $a['uuid'] : $a['id'];
+                    $q['active_attempt_uuid'] = !empty($a['uuid']) ? $a['uuid'] : $a['id'];
                     break;
                 }
             }
@@ -76,24 +77,25 @@ class LmsQuizzes extends BaseController
         
         $quiz = $quizModel->where('org_id', $orgId)
                           ->where('is_published', 1)
-                          ->find($quiz_id);
+                          ->findByIdOrUuid($quiz_id);
                           
         if (!$quiz) return redirect()->to('lms/quizzes')->with('error', 'Quiz not found.');
+        $realQuizId = $quiz['id'];
         
         // Check for active attempt
         $active_attempt = $attemptModel->where('org_id', $orgId)
-                                       ->where('quiz_id', $quiz_id)
+                                       ->where('quiz_id', $realQuizId)
                                        ->where('student_id', $studentId)
                                        ->where('status', 'in_progress')
                                        ->first();
                                        
         if ($active_attempt) {
-            return redirect()->to('lms/quizzes/exam/' . $active_attempt['id']);
+            return redirect()->to('lms/quizzes/exam/' . ($active_attempt['uuid'] ?? $active_attempt['id']));
         }
         
         // Check max attempts
         $attempt_count = $attemptModel->where('org_id', $orgId)
-                                      ->where('quiz_id', $quiz_id)
+                                      ->where('quiz_id', $realQuizId)
                                       ->where('student_id', $studentId)
                                       ->countAllResults();
                                       
@@ -102,17 +104,20 @@ class LmsQuizzes extends BaseController
             return redirect()->to('lms/quizzes')->with('error', 'Maximum attempts reached.');
         }
         
-        // Create new attempt
+        // Create new attempt (BaseModel automatically assigns uuid_v7)
         $attempt_id = $attemptModel->insert([
             'org_id' => $orgId,
-            'quiz_id' => $quiz_id,
+            'quiz_id' => $realQuizId,
             'student_id' => $studentId,
             'started_at' => date('Y-m-d H:i:s'),
             'start_time' => date('Y-m-d H:i:s'),
             'status' => 'in_progress'
         ]);
         
-        return redirect()->to('lms/quizzes/exam/' . $attempt_id);
+        $newAttempt = $attemptModel->find($attempt_id);
+        $attemptIdentifier = !empty($newAttempt['uuid']) ? $newAttempt['uuid'] : $attempt_id;
+        
+        return redirect()->to('lms/quizzes/exam/' . $attemptIdentifier);
     }
 
     public function exam($attempt_id)
@@ -128,9 +133,10 @@ class LmsQuizzes extends BaseController
         
         $attempt = $attemptModel->where('org_id', $orgId)
                                 ->where('student_id', $studentId)
-                                ->find($attempt_id);
+                                ->findByIdOrUuid($attempt_id);
                                 
         if (!$attempt) return redirect()->to('lms/quizzes');
+        $realAttemptId = $attempt['id'];
         
         if (($attempt['status'] ?? '') !== 'in_progress') {
             return redirect()->to('lms/quizzes')->with('success', 'This attempt has already been submitted.');
@@ -148,7 +154,7 @@ class LmsQuizzes extends BaseController
             
             if ($time_remaining <= 0) {
                 // Auto submit
-                return $this->submitExam($attempt_id, true);
+                return $this->submitExam($realAttemptId, true);
             }
         } else {
             $time_remaining = 0;
@@ -160,7 +166,7 @@ class LmsQuizzes extends BaseController
                         ->get()->getResultArray();
 
         $saved_answers = $db->table('lms_quiz_answers')
-                            ->where('attempt_id', $attempt_id)
+                            ->where('attempt_id', $realAttemptId)
                             ->get()->getResultArray();
         
         $answers_map = [];
@@ -193,26 +199,31 @@ class LmsQuizzes extends BaseController
         $studentId = session('student_id') ?: (session('lms_student_id') ?: 3);
         
         $db = \Config\Database::connect();
-        $attempt = $db->table('lms_quiz_attempts')
-                      ->where('id', $attempt_id)
+        $builder = $db->table('lms_quiz_attempts')
                       ->where('student_id', $studentId)
-                      ->where('status', 'in_progress')
-                      ->get()->getRowArray();
+                      ->where('status', 'in_progress');
+        if (is_uuid($attempt_id)) {
+            $builder->where('uuid', $attempt_id);
+        } else {
+            $builder->where('id', $attempt_id);
+        }
+        $attempt = $builder->get()->getRowArray();
                                 
         if (!$attempt) return $this->response->setJSON(['success' => false]);
+        $realAttemptId = $attempt['id'];
         
         $existing = $db->table('lms_quiz_answers')
-                       ->where('attempt_id', $attempt_id)
+                       ->where('attempt_id', $realAttemptId)
                        ->where('question_id', $question_id)
                        ->get()->getRowArray();
-                                
+                                 
         if ($existing) {
             $db->table('lms_quiz_answers')
                ->where('id', $existing['id'])
                ->update(['selected_option_id' => $option_id]);
         } else {
             $db->table('lms_quiz_answers')->insert([
-                'attempt_id' => $attempt_id,
+                'attempt_id' => $realAttemptId,
                 'question_id' => $question_id,
                 'selected_option_id' => $option_id
             ]);
@@ -233,18 +244,23 @@ class LmsQuizzes extends BaseController
         $studentId = session('student_id') ?: (session('lms_student_id') ?: 3);
         
         $db = \Config\Database::connect();
-        $attempt = $db->table('lms_quiz_attempts')
-                      ->where('id', $attempt_id)
-                      ->where('student_id', $studentId)
-                      ->get()->getRowArray();
-                                
+        $builder = $db->table('lms_quiz_attempts')
+                      ->where('student_id', $studentId);
+        if (is_uuid($attempt_id)) {
+            $builder->where('uuid', $attempt_id);
+        } else {
+            $builder->where('id', $attempt_id);
+        }
+        $attempt = $builder->get()->getRowArray();
+                                 
         if (!$attempt || ($attempt['status'] ?? '') !== 'in_progress') {
             return redirect()->to('lms/quizzes');
         }
+        $realAttemptId = $attempt['id'];
 
         // Calculate score
         $questions = $db->table('lms_quiz_questions')->where('quiz_id', $attempt['quiz_id'])->get()->getResultArray();
-        $answers = $db->table('lms_quiz_answers')->where('attempt_id', $attempt_id)->get()->getResultArray();
+        $answers = $db->table('lms_quiz_answers')->where('attempt_id', $realAttemptId)->get()->getResultArray();
         
         $answers_map = [];
         foreach($answers as $ans) {
@@ -277,7 +293,7 @@ class LmsQuizzes extends BaseController
             }
         }
         
-        $db->table('lms_quiz_attempts')->where('id', $attempt_id)->update([
+        $db->table('lms_quiz_attempts')->where('id', $realAttemptId)->update([
             'status' => $auto_submit ? 'auto_submitted' : 'completed',
             'submitted_at' => date('Y-m-d H:i:s'),
             'end_time' => date('Y-m-d H:i:s'),

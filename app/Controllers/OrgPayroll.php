@@ -34,14 +34,18 @@ class OrgPayroll extends BaseController
         $model = new SalaryComponentModel();
 
         $id = $this->request->getPost('id');
+        $type = $this->request->getPost('type') ?: 'Earning';
+        $defaultAmount = (float)$this->request->getPost('default_amount');
         $data = [
             'org_id' => $orgId,
             'name' => trim($this->request->getPost('name')),
             'code' => strtoupper(trim($this->request->getPost('code'))),
-            'type' => $this->request->getPost('type'), // Earning or Deduction
-            'calculation_type' => $this->request->getPost('calculation_type'), // Fixed or Percentage
+            'type' => $type, // Earning or Deduction
+            'component_type' => $type,
+            'calculation_type' => $this->request->getPost('calculation_type') ?: 'Fixed', // Fixed or Percentage
             'percentage_of' => $this->request->getPost('percentage_of') ?: null,
-            'default_amount' => (float)$this->request->getPost('default_amount'),
+            'default_amount' => $defaultAmount,
+            'default_value' => $defaultAmount,
             'is_taxable' => $this->request->getPost('is_taxable') ? 1 : 0
         ];
 
@@ -94,12 +98,14 @@ class OrgPayroll extends BaseController
 
         $id = $this->request->getPost('id');
         $componentsJson = $this->request->getPost('components') ? json_encode($this->request->getPost('components')) : null;
+        $basicSalary = (float)$this->request->getPost('basic_salary');
 
         $data = [
             'org_id' => $orgId,
             'name' => trim($this->request->getPost('name')),
             'designation_id' => $this->request->getPost('designation_id') ?: null,
-            'basic_salary' => (float)$this->request->getPost('basic_salary'),
+            'basic_salary' => $basicSalary,
+            'base_salary' => $basicSalary,
             'components_json' => $componentsJson,
             'total_earnings' => (float)$this->request->getPost('total_earnings'),
             'total_deductions' => (float)$this->request->getPost('total_deductions'),

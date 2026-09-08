@@ -19,7 +19,7 @@
     <form action="<?= site_url('org/internships/savePosting') ?>" method="POST" id="postingForm">
         <?= csrf_field() ?>
         <?php if ($posting): ?>
-            <input type="hidden" name="id" value="<?= $posting['id'] ?>">
+            <input type="hidden" name="id" value="<?= esc($posting['uuid'] ?? $posting['id']) ?>">
         <?php endif; ?>
 
         <!-- Posting Master Details -->

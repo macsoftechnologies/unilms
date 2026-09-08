@@ -93,7 +93,9 @@ class OrgMarks extends BaseController
             'max_marks' => $this->request->getPost('max_marks')
         ];
 
-        if ($id = $this->request->getPost('component_id')) {
+        if ($compParam = $this->request->getPost('component_id')) {
+            $existing = $componentModel->where('org_id', $this->org_id)->findByIdOrUuid($compParam);
+            $id = $existing ? $existing['id'] : $compParam;
             $componentModel->update($id, $data);
             $msg = 'Component updated.';
         } else {
@@ -124,9 +126,9 @@ class OrgMarks extends BaseController
     {
         if (!$this->hasPermission('manage_academics')) return redirect()->to('org/dashboard');
         $componentModel = new MarkComponentModel();
-        $comp = $componentModel->where('org_id', $this->org_id)->find($id);
+        $comp = $componentModel->where('org_id', $this->org_id)->findByIdOrUuid($id);
         if ($comp) {
-            $componentModel->delete($id);
+            $componentModel->delete($comp['id']);
         }
         return redirect()->back()->with('success', 'Component deleted.');
     }

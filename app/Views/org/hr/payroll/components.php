@@ -52,7 +52,7 @@
                         <?= $c['is_taxable'] ? '<span class="badge" style="background: #10b98115; color: #10b981;">Yes</span>' : '<span style="color: var(--text-muted); font-size: 12px;">No</span>' ?>
                     </td>
                     <td>
-                        <a href="<?= base_url('org/payroll/components/delete/' . $c['id']) ?>" class="btn-icon text-danger" onclick="return confirm('Delete this component?')" title="Delete">
+                        <a href="<?= base_url('org/payroll/components/delete/' . ($c['uuid'] ?? $c['id'])) ?>" class="btn-icon text-danger" onclick="return confirm('Delete this component?')" title="Delete">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </td>

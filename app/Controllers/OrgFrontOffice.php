@@ -326,7 +326,9 @@ class OrgFrontOffice extends BaseController
         ];
 
         if ($id) {
-            $enquiryModel->where('org_id', $orgId)->update($id, $data);
+            $existing = $enquiryModel->where('org_id', $orgId)->findByIdOrUuid($id);
+            $realId = $existing ? $existing['id'] : $id;
+            $enquiryModel->where('org_id', $orgId)->update($realId, $data);
             return redirect()->to('org/front-office/enquiries')->with('success', 'Enquiry updated successfully.');
         } else {
             $data['enquiry_number'] = $enqNo;
@@ -344,10 +346,12 @@ class OrgFrontOffice extends BaseController
 
         $enquiryId = $this->request->getPost('enquiry_id');
         $newStatus = $this->request->getPost('status');
+        $enquiry = $enquiryModel->where('org_id', $orgId)->findByIdOrUuid($enquiryId);
+        $realEnquiryId = $enquiry ? $enquiry['id'] : $enquiryId;
 
         $followupModel->insert([
             'org_id' => $orgId,
-            'enquiry_id' => $enquiryId,
+            'enquiry_id' => $realEnquiryId,
             'notes' => trim($this->request->getPost('notes')),
             'followup_date' => date('Y-m-d H:i:s'),
             'next_followup_date' => $this->request->getPost('next_followup_date') ?: null,
@@ -356,7 +360,7 @@ class OrgFrontOffice extends BaseController
         ]);
 
         if ($newStatus) {
-            $enquiryModel->where('org_id', $orgId)->update($enquiryId, ['status' => $newStatus]);
+            $enquiryModel->where('org_id', $orgId)->update($realEnquiryId, ['status' => $newStatus]);
         }
 
         return redirect()->to('org/front-office/enquiries')->with('success', 'Follow-up interaction recorded.');
@@ -365,7 +369,8 @@ class OrgFrontOffice extends BaseController
     public function convertToAdmission($id)
     {
         $orgId = session('org_id');
-        $enquiry = (new AdmissionEnquiryModel())->where('org_id', $orgId)->find($id);
+        $enquiryModel = new AdmissionEnquiryModel();
+        $enquiry = $enquiryModel->where('org_id', $orgId)->findByIdOrUuid($id);
         if (!$enquiry) return redirect()->to('org/front-office/enquiries')->with('error', 'Enquiry not found.');
 
         // Convert into Lead in Admissions CRM
@@ -382,7 +387,7 @@ class OrgFrontOffice extends BaseController
             'status' => 'Interested'
         ]);
 
-        (new AdmissionEnquiryModel())->where('org_id', $orgId)->update($id, ['status' => 'Sent to Admin Officer']);
+        $enquiryModel->where('org_id', $orgId)->update($enquiry['id'], ['status' => 'Sent to Admin Officer']);
 
         return redirect()->to('org/admissions/leads')->with('success', "Enquiry #{$enquiry['enquiry_number']} successfully forwarded to Admissions CRM as a Lead.");
     }

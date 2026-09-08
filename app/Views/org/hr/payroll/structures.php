@@ -47,7 +47,7 @@
                         </span>
                     </td>
                     <td>
-                        <a href="<?= base_url('org/payroll/structures/delete/' . $s['id']) ?>" class="btn-icon text-danger" onclick="return confirm('Delete this salary structure?')" title="Delete">
+                        <a href="<?= base_url('org/payroll/structures/delete/' . ($s['uuid'] ?? $s['id'])) ?>" class="btn-icon text-danger" onclick="return confirm('Delete this salary structure?')" title="Delete">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </td>

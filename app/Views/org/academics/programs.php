@@ -39,7 +39,7 @@
                     <td>
                         <div class="action-buttons">
                             <button class="btn-icon" onclick='editProg(<?= json_encode($prog) ?>)' title="Edit"><i class="fa-solid fa-pen"></i></button>
-                            <a href="<?= base_url('org/academics/programs/delete/'.$prog['id']) ?>" class="btn-icon text-danger" onclick="return confirm('Are you sure you want to delete this program? This is blocked if cohorts exist.')" title="Delete"><i class="fa-solid fa-trash"></i></a>
+                            <a href="<?= base_url('org/academics/programs/delete/' . ($prog['uuid'] ?? $prog['id'])) ?>" class="btn-icon text-danger" onclick="return confirm('Are you sure you want to delete this program? This is blocked if cohorts exist.')" title="Delete"><i class="fa-solid fa-trash"></i></a>
                         </div>
                     </td>
                 </tr>

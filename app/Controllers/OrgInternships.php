@@ -61,13 +61,14 @@ class OrgInternships extends BaseController
         $taskModel = new InternshipTaskModel();
         $deptModel = new DepartmentModel();
 
-        $posting = $postingModel->where('org_id', $this->org_id)->find($id);
+        $posting = $postingModel->where('org_id', $this->org_id)->findByIdOrUuid($id);
         if (!$posting) {
             return redirect()->to('org/internships')->with('error', 'Posting not found.');
         }
+        $realId = $posting['id'];
 
         $departments = $deptModel->where('org_id', $this->org_id)->findAll();
-        $milestones = $milestoneModel->where('posting_id', $id)->orderBy('milestone_number', 'ASC')->findAll();
+        $milestones = $milestoneModel->where('posting_id', $realId)->orderBy('milestone_number', 'ASC')->findAll();
         foreach ($milestones as &$m) {
             $m['tasks'] = $taskModel->where('milestone_id', $m['id'])->orderBy('sort_order', 'ASC')->findAll();
         }
@@ -109,8 +110,14 @@ class OrgInternships extends BaseController
         if (empty($id)) {
             $postingId = $postingModel->insert($data);
         } else {
-            $postingModel->update($id, $data);
-            $postingId = $id;
+            $existing = $postingModel->where('org_id', $this->org_id)->findByIdOrUuid($id);
+            if ($existing) {
+                $postingModel->update($existing['id'], $data);
+                $postingId = $existing['id'];
+            } else {
+                $postingModel->update($id, $data);
+                $postingId = $id;
+            }
         }
 
         // Process Roadmap (Milestones & Tasks)

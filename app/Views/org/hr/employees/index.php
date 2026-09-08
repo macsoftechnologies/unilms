@@ -98,7 +98,7 @@
                 <td style="padding: 12px 8px;"><?= esc(date('d/m/Y', strtotime($e['joining_date']))) ?></td>
                 <td style="padding: 12px 8px; text-align: right; font-weight: bold;">₹<?= number_format($e['base_salary'], 2) ?></td>
                 <td style="padding: 12px 8px; text-align: right;">
-                    <form action="<?= base_url('org/hr/employees/delete/'.$e['id']) ?>" method="POST" onsubmit="return confirm('Remove employee? This does not delete the user account, but removes their HR profile.');">
+                    <form action="<?= base_url('org/hr/employees/delete/' . ($e['uuid'] ?? $e['id'])) ?>" method="POST" onsubmit="return confirm('Remove employee? This does not delete the user account, but removes their HR profile.');">
                         <?= csrf_field() ?>
                         <button class="btn btn-outline" style="padding: 4px 8px; font-size: 12px; color: var(--danger); border-color: var(--danger);">Remove</button>
                     </form>

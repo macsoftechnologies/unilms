@@ -49,7 +49,7 @@
                 <select name="faculty_id" class="form-control" required style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; font-size: 13px; background: var(--surface);">
                     <option value="" disabled selected>Select Faculty Member...</option>
                     <?php if(!empty($faculty)): foreach($faculty as $f): ?>
-                        <option value="<?= $f['id'] ?>"><?= esc($f['first_name']) ?> <?= esc($f['last_name']) ?> (<?= esc($f['designation'] ?? 'Professor') ?>)</option>
+                        <option value="<?= $f['id'] ?>"><?= esc($f['full_name'] ?? ($f['first_name'] ?? 'Faculty Member')) ?> (<?= esc($f['designation'] ?? 'Faculty') ?>)</option>
                     <?php endforeach; else: ?>
                         <option value="1">Dr. Rajesh Sharma (Professor)</option>
                         <option value="2">Prof. Priya Sundaram (Associate Professor)</option>

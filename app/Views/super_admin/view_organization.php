@@ -61,7 +61,7 @@
             </div>
             
             <div style="margin-top: 24px;">
-                <a href="<?= base_url('superadmin/edit_organization/'.$org['id']) ?>" class="btn btn-primary" style="width: 100%; text-align: center;"><i class="fa-solid fa-pen"></i> Edit Organization</a>
+                <a href="<?= base_url('superadmin/edit_organization/' . ($org['uuid'] ?? $org['id'])) ?>" class="btn btn-primary" style="width: 100%; text-align: center;"><i class="fa-solid fa-pen"></i> Edit Organization</a>
             </div>
         </div>
         

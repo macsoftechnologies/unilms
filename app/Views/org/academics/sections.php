@@ -40,7 +40,7 @@
                         </span>
                     </td>
                     <td>
-                        <a href="<?= base_url('org/academics/sections/delete/' . $sec['id']) ?>" class="btn-icon text-danger" onclick="return confirm('Delete this section?')" title="Delete">
+                        <a href="<?= base_url('org/academics/sections/delete/' . ($sec['uuid'] ?? $sec['id'])) ?>" class="btn-icon text-danger" onclick="return confirm('Delete this section?')" title="Delete">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </td>

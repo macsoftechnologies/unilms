@@ -46,10 +46,10 @@
                     <td>
                         <div class="action-buttons">
                             <?php if($lead['status'] != 'Converted'): ?>
-                            <a href="<?= base_url('org/admissions/leads/convert/'.$lead['id']) ?>" class="btn-icon text-success" title="Convert to Application" onclick="return confirm('Convert this lead into a formal application?')"><i class="fa-solid fa-file-signature"></i></a>
+                            <a href="<?= base_url('org/admissions/leads/convert/' . ($lead['uuid'] ?? $lead['id'])) ?>" class="btn-icon text-success" title="Convert to Application" onclick="return confirm('Convert this lead into a formal application?')"><i class="fa-solid fa-file-signature"></i></a>
                             <?php endif; ?>
                             <button class="btn-icon" onclick='editLead(<?= json_encode($lead) ?>)' title="Edit"><i class="fa-solid fa-pen"></i></button>
-                            <a href="<?= base_url('org/admissions/leads/delete/'.$lead['id']) ?>" class="btn-icon text-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this lead?')"><i class="fa-solid fa-trash"></i></a>
+                            <a href="<?= base_url('org/admissions/leads/delete/' . ($lead['uuid'] ?? $lead['id'])) ?>" class="btn-icon text-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this lead?')"><i class="fa-solid fa-trash"></i></a>
                         </div>
                     </td>
                 </tr>

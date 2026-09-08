@@ -35,11 +35,11 @@
                         <td>
                             <div class="action-buttons">
                                 <?php if(!$admin['is_root'] || session()->get('admin_email') == $admin['email']): ?>
-                                    <button class="btn-icon text-primary" onclick="editAdmin(<?= $admin['id'] ?>, '<?= esc($admin['email']) ?>', '<?= esc($admin['permissions'] ?? '[]', 'js') ?>')" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="btn-icon text-primary" onclick="editAdmin('<?= $admin['uuid'] ?? $admin['id'] ?>', '<?= esc($admin['email']) ?>', '<?= esc($admin['permissions'] ?? '[]', 'js') ?>')" title="Edit"><i class="fa-solid fa-pen"></i></button>
                                 <?php endif; ?>
                                 
                                 <?php if(!$admin['is_root']): ?>
-                                    <button class="btn-icon text-danger" onclick="deleteAdmin(<?= $admin['id'] ?>)" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                                    <button class="btn-icon text-danger" onclick="deleteAdmin('<?= $admin['uuid'] ?? $admin['id'] ?>')" title="Delete"><i class="fa-solid fa-trash"></i></button>
                                 <?php endif; ?>
                             </div>
                         </td>

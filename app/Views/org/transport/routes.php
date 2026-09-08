@@ -32,7 +32,7 @@
                     <td><?= esc($r['end_point']) ?></td>
                     <td>
                         <button class="btn btn-outline" style="padding: 4px 8px; font-size: 12px;" onclick="editRoute(<?= htmlspecialchars(json_encode($r)) ?>)">Edit</button>
-                        <a href="<?= base_url('org/transport/delete_route/'.$r['id']) ?>" class="btn btn-outline" style="padding: 4px 8px; font-size: 12px; color: var(--danger); border-color: var(--danger);" onclick="return confirm('Delete this route?')">Del</a>
+                        <a href="<?= base_url('org/transport/delete_route/' . ($r['uuid'] ?? $r['id'])) ?>" class="btn btn-outline" style="padding: 4px 8px; font-size: 12px; color: var(--danger); border-color: var(--danger);" onclick="return confirm('Delete this route?')">Del</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

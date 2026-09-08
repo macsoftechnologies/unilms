@@ -51,7 +51,7 @@
                         <div style="font-size: 12px; color: var(--text-muted);">Max Backlogs: <strong><?= $d['max_backlogs'] ?></strong></div>
                     </td>
                     <td>
-                        <a href="<?= base_url('org/placements/drives/' . $d['id'] . '/applications') ?>" class="badge" style="background: rgba(79, 70, 229, 0.1); color: #4f46e5; text-decoration: none; font-weight: 700; padding: 6px 12px; border-radius: 12px;">
+                        <a href="<?= base_url('org/placements/drives/' . ($d['uuid'] ?? $d['id']) . '/applications') ?>" class="badge" style="background: rgba(79, 70, 229, 0.1); color: #4f46e5; text-decoration: none; font-weight: 700; padding: 6px 12px; border-radius: 12px;">
                             <i class="fa-solid fa-users me-1"></i> <?= $d['applicant_count'] ?> Candidates (<?= $d['selected_count'] ?> Selected)
                         </a>
                     </td>
@@ -67,7 +67,7 @@
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <a href="<?= base_url('org/placements/drives/' . $d['id'] . '/applications') ?>" class="btn-icon" title="View Applicants">
+                            <a href="<?= base_url('org/placements/drives/' . ($d['uuid'] ?? $d['id']) . '/applications') ?>" class="btn-icon" title="View Applicants">
                                 <i class="fa-solid fa-users-viewfinder"></i>
                             </a>
                         </div>

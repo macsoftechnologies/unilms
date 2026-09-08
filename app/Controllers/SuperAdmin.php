@@ -113,29 +113,39 @@ class SuperAdmin extends BaseController
     
     public function view_organization($id)
     {
+        if (!is_uuid($id)) {
+            return redirect()->to('/superadmin/organizations')->with('error', 'Invalid organization identifier.');
+        }
+
         $orgModel = new OrganizationModel();
         $orgUserModel = new \App\Models\OrgUserModel();
         
         $data['org'] = $orgModel->select('organizations.*, plans.name as plan_name')
-                                ->join('plans', 'plans.id = organizations.plan_id', 'left')
-                                ->find($id);
+            ->join('plans', 'plans.id = organizations.plan_id', 'left')
+            ->where('organizations.uuid', $id)
+            ->first();
         
         if (!$data['org']) {
             return redirect()->to('/superadmin/organizations')->with('error', 'Organization not found.');
         }
         
-        $data['users'] = $orgUserModel->where('org_id', $id)->orderBy('created_at', 'DESC')->findAll();
+        $orgId = $data['org']['id'];
+        $data['users'] = $orgUserModel->where('org_id', $orgId)->orderBy('created_at', 'DESC')->findAll();
         
         return view('super_admin/view_organization', $data);
     }
     
     public function edit_org_view($id)
     {
+        if (!is_uuid($id)) {
+            return redirect()->to('/superadmin/organizations')->with('error', 'Invalid organization identifier.');
+        }
+
         $orgModel = new OrganizationModel();
         $planModel = new PlanModel();
         
         $data['plans'] = $planModel->findAll();
-        $data['org'] = $orgModel->find($id);
+        $data['org'] = $orgModel->findByUuid($id);
         
         if (!$data['org']) {
             return redirect()->to('/superadmin/organizations')->with('error', 'Organization not found.');

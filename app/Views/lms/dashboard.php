@@ -354,7 +354,7 @@
                                 <div style="font-size: 12px; color: #10b981; font-weight: 700;">
                                     <i class="fa-solid fa-circle-check me-1"></i> Published Course
                                 </div>
-                                <a href="<?= base_url('lms/materials/watch/' . $c['id']) ?>" class="btn btn-primary" style="padding: 6px 16px; font-size: 12.5px; border-radius: 20px;">
+                                <a href="<?= base_url('lms/materials/watch/' . ($c['uuid'] ?? $c['id'])) ?>" class="btn btn-primary" style="padding: 6px 16px; font-size: 12.5px; border-radius: 20px;">
                                     Resume Video <i class="fa-solid fa-arrow-right ms-1"></i>
                                 </a>
                             </div>
@@ -415,7 +415,7 @@
                                     Due: <?= date('d M Y, h:i A', strtotime($a['due_date'])) ?> &bull; Max Marks: <?= esc($a['max_marks']) ?>
                                 </div>
                             </div>
-                            <a href="<?= base_url('lms/assignments/view/' . $a['id']) ?>" class="btn btn-outline" style="font-size: 12px; padding: 6px 14px; border-radius: 10px;">
+                            <a href="<?= base_url('lms/assignments/view/' . ($a['uuid'] ?? $a['id'])) ?>" class="btn btn-outline" style="font-size: 12px; padding: 6px 14px; border-radius: 10px;">
                                 <?= $sub ? 'View Review' : 'Submit Task' ?>
                             </a>
                         </div>

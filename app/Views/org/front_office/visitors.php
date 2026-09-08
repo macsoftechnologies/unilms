@@ -65,14 +65,14 @@
                         <?php if($v['out_time']): ?>
                             <span style="color: #64748b; font-size: 13px;"><?= date('H:i', strtotime($v['out_time'])) ?></span>
                         <?php else: ?>
-                            <a href="<?= base_url('org/front-office/visitors/checkout/' . $v['id']) ?>" class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; color: #ef4444; border-color: #ef4444;" onclick="return confirm('Check out visitor?')">
+                            <a href="<?= base_url('org/front-office/visitors/checkout/' . ($v['uuid'] ?? $v['id'])) ?>" class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; color: #ef4444; border-color: #ef4444;" onclick="return confirm('Check out visitor?')">
                                 <i class="fa-solid fa-right-from-bracket"></i> Check-out
                             </a>
                         <?php endif; ?>
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <a href="<?= base_url('org/front-office/visitors/print-pass/' . $v['id']) ?>" target="_blank" class="btn-icon" title="Print Gate Pass">
+                            <a href="<?= base_url('org/front-office/visitors/print-pass/' . ($v['uuid'] ?? $v['id'])) ?>" target="_blank" class="btn-icon" title="Print Gate Pass">
                                 <i class="fa-solid fa-print"></i>
                             </a>
                         </div>

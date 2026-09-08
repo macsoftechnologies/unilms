@@ -56,8 +56,8 @@
                         </td>
                         <td>
                             <div class="action-buttons" style="display: flex; gap: 6px; align-items: center;">
-                                <a href="<?= base_url('superadmin/view_organization/'.$org['id']) ?>" class="btn-icon text-info" title="View Details"><i class="fa-solid fa-eye"></i></a>
-                                <a href="<?= base_url('superadmin/edit_organization/'.$org['id']) ?>" class="btn-icon text-primary" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                                <a href="<?= base_url('superadmin/view_organization/'.($org['uuid'] ?? $org['id'])) ?>" class="btn-icon text-info" title="View Details"><i class="fa-solid fa-eye"></i></a>
+                                <a href="<?= base_url('superadmin/edit_organization/'.($org['uuid'] ?? $org['id'])) ?>" class="btn-icon text-primary" title="Edit"><i class="fa-solid fa-pen"></i></a>
                                 <button type="button" class="btn-icon btn-renew" data-org="<?= $org['id'] ?>" title="Renew / Add Payment"><i class="fa-solid fa-arrows-rotate"></i></button>
                                 <?php if($org['status'] == 'active'): ?>
                                     <button type="button" class="btn-icon text-danger btn-toggle-status" data-org="<?= $org['id'] ?>" data-status="suspended" title="Suspend"><i class="fa-solid fa-ban"></i></button>

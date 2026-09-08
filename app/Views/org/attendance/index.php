@@ -80,7 +80,7 @@
                                 <td><?= esc($rs['subject_name']) ?></td>
                                 <td style="font-size: 13px; color: var(--text-muted);"><?= esc($rs['topic_taught']) ?: '-' ?></td>
                                 <td style="text-align: right;">
-                                    <a href="<?= base_url('org/attendance/take/'.$rs['id']) ?>" class="btn btn-primary" style="padding: 4px 10px; font-size: 12px;"><i class="fa-solid fa-pen"></i> Edit</a>
+                                    <a href="<?= base_url('org/attendance/take/' . ($rs['uuid'] ?? $rs['id'])) ?>" class="btn btn-primary" style="padding: 4px 10px; font-size: 12px;"><i class="fa-solid fa-pen"></i> Edit</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

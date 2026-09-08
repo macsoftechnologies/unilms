@@ -23,10 +23,10 @@ Preview Course - <?= esc($course['title']) ?>
             <h2 class="fw-bold text-dark mb-0 brand-font"><?= esc($course['title']) ?></h2>
         </div>
         <div class="d-flex gap-2">
-            <a href="<?= base_url('creator/courses/edit/' . $course['id']) ?>" class="btn btn-outline-secondary rounded-pill px-3">
+            <a href="<?= base_url('creator/courses/edit/' . ($course['uuid'] ?? $course['id'])) ?>" class="btn btn-outline-secondary rounded-pill px-3">
                 <i class="fa-solid fa-pen-to-square me-1"></i> Edit Info
             </a>
-            <a href="<?= base_url('creator/courses/builder/' . $course['id']) ?>" class="btn btn-gradient-primary rounded-pill px-3">
+            <a href="<?= base_url('creator/courses/builder/' . ($course['uuid'] ?? $course['id'])) ?>" class="btn btn-gradient-primary rounded-pill px-3">
                 <i class="fa-solid fa-photo-film me-1"></i> Studio Builder
             </a>
         </div>
@@ -116,7 +116,7 @@ Preview Course - <?= esc($course['title']) ?>
                                     <?php else: ?>
                                         <?php foreach ($ch['lessons'] as $les): ?>
                                             <?php $isActive = ($activeLesson && $activeLesson['id'] == $les['id']); ?>
-                                            <a href="<?= base_url('creator/courses/preview/' . $course['id'] . '?lesson=' . $les['id']) ?>" 
+                                            <a href="<?= base_url('creator/courses/preview/' . ($course['uuid'] ?? $course['id']) . '?lesson=' . ($les['uuid'] ?? $les['id'])) ?>" 
                                                class="list-group-item list-group-item-action d-flex align-items-center justify-content-between py-2 px-3 small <?= $isActive ? 'bg-primary bg-opacity-10 text-primary fw-bold' : '' ?>" style="font-size: 12.5px;">
                                                 <div class="d-flex align-items-center gap-2 overflow-hidden">
                                                     <i class="fa-solid <?= $isActive ? 'fa-circle-play text-primary' : 'fa-play text-muted' ?>" style="font-size: 11px;"></i>

@@ -36,7 +36,7 @@
                     <td style="font-size: 13px; color: var(--text-muted);"><?= esc($l['description']) ?></td>
                     <td>
                         <button class="btn btn-outline" style="padding: 4px 8px; font-size: 12px;" onclick="editLog(<?= htmlspecialchars(json_encode($l)) ?>)">Edit</button>
-                        <a href="<?= base_url('org/transport/delete_logbook/'.$l['id']) ?>" class="btn btn-outline" style="padding: 4px 8px; font-size: 12px; color: var(--danger); border-color: var(--danger);" onclick="return confirm('Delete this log entry?')">Del</a>
+                        <a href="<?= base_url('org/transport/delete_logbook/' . ($l['uuid'] ?? $l['id'])) ?>" class="btn btn-outline" style="padding: 4px 8px; font-size: 12px; color: var(--danger); border-color: var(--danger);" onclick="return confirm('Delete this log entry?')">Del</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

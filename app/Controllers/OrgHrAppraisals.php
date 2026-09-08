@@ -49,15 +49,21 @@ class OrgHrAppraisals extends BaseController
         $model = new HrAppraisalModel();
 
         $id = $this->request->getPost('id');
+        $selfRating = (float)$this->request->getPost('self_rating');
+        $hodRating = (float)$this->request->getPost('hod_rating');
+        $reviewedBy = session('org_user_id');
         $data = [
             'org_id' => $orgId,
             'employee_id' => $this->request->getPost('employee_id'),
             'appraisal_period' => $this->request->getPost('appraisal_period') ?: date('Y') . '-' . (date('Y') + 1),
             'academic_year_id' => $this->request->getPost('academic_year_id') ?: null,
-            'self_rating' => (float)$this->request->getPost('self_rating'),
-            'hod_rating' => (float)$this->request->getPost('hod_rating'),
+            'self_rating' => $selfRating,
+            'self_score' => $selfRating,
+            'hod_rating' => $hodRating,
+            'reviewer_score' => $hodRating,
             'final_score' => (float)$this->request->getPost('final_score'),
-            'reviewed_by' => session('org_user_id'),
+            'reviewed_by' => $reviewedBy,
+            'evaluator_id' => $reviewedBy,
             'review_date' => date('Y-m-d'),
             'strengths' => trim($this->request->getPost('strengths')),
             'areas_for_improvement' => trim($this->request->getPost('areas_for_improvement')),

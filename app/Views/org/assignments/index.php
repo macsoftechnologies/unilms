@@ -56,9 +56,9 @@
                         <td><?= esc($a['full_name']) ?></td>
                     <?php endif; ?>
                     <td>
-                        <a href="<?= base_url('org/assignments/submissions/'.$a['id']) ?>" class="btn btn-outline" style="padding: 4px 10px; font-size: 13px;"><i class="fa-solid fa-list-check"></i> Submissions</a>
-                        <a href="<?= base_url('org/assignments/edit/'.$a['id']) ?>" class="btn btn-outline" style="padding: 4px 10px; margin-left: 4px;"><i class="fa-solid fa-pen"></i></a>
-                        <form action="<?= base_url('org/assignments/delete/'.$a['id']) ?>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this assignment and all its submissions?');">
+                        <a href="<?= base_url('org/assignments/submissions/' . ($a['uuid'] ?? $a['id'])) ?>" class="btn btn-outline" style="padding: 4px 10px; font-size: 13px;"><i class="fa-solid fa-list-check"></i> Submissions</a>
+                        <a href="<?= base_url('org/assignments/edit/' . ($a['uuid'] ?? $a['id'])) ?>" class="btn btn-outline" style="padding: 4px 10px; margin-left: 4px;"><i class="fa-solid fa-pen"></i></a>
+                        <form action="<?= base_url('org/assignments/delete/' . ($a['uuid'] ?? $a['id'])) ?>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this assignment and all its submissions?');">
                             <?= csrf_field() ?>
                             <button class="btn btn-outline" style="padding: 4px 10px; color: var(--danger); border-color: rgba(238,93,80,0.2);"><i class="fa-solid fa-trash"></i></button>
                         </form>

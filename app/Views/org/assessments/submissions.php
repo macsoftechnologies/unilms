@@ -75,7 +75,7 @@ Submissions - <?= esc($assessment['title']) ?>
                                     </span>
                                 </td>
                                 <td class="text-end pe-4">
-                                    <a href="<?= site_url('org/assessments/grade/' . $sub['id']) ?>" class="btn btn-sm btn-primary rounded-pill px-3">
+                                    <a href="<?= site_url('org/assessments/grade/' . ($sub['uuid'] ?? $sub['id'])) ?>" class="btn btn-sm btn-primary rounded-pill px-3">
                                         <i class="fas fa-marker me-1"></i> <?= ($sub['status'] === 'graded') ? 'Review Grade' : 'Grade Submission' ?>
                                     </a>
                                 </td>

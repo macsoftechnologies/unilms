@@ -27,7 +27,7 @@
                     <td style="padding: 12px 8px;"><?= esc($d['name']) ?></td>
                     <td style="padding: 12px 8px; color: var(--text-muted);"><?= esc($d['description']) ?></td>
                     <td style="padding: 12px 8px; text-align: right;">
-                        <form action="<?= base_url('org/hr/settings/delete_department/'.$d['id']) ?>" method="POST" onsubmit="return confirm('Delete department?');">
+                        <form action="<?= base_url('org/hr/settings/delete_department/' . ($d['uuid'] ?? $d['id'])) ?>" method="POST" onsubmit="return confirm('Delete department?');">
                             <?= csrf_field() ?>
                             <button class="btn btn-outline" style="padding: 4px 8px; font-size: 12px; color: var(--danger); border-color: var(--danger);">Delete</button>
                         </form>
@@ -61,7 +61,7 @@
                 <tr style="border-bottom: 1px solid var(--border-color);">
                     <td style="padding: 12px 8px;"><?= esc($d['name']) ?></td>
                     <td style="padding: 12px 8px; text-align: right;">
-                        <form action="<?= base_url('org/hr/settings/delete_designation/'.$d['id']) ?>" method="POST" onsubmit="return confirm('Delete designation?');">
+                        <form action="<?= base_url('org/hr/settings/delete_designation/' . ($d['uuid'] ?? $d['id'])) ?>" method="POST" onsubmit="return confirm('Delete designation?');">
                             <?= csrf_field() ?>
                             <button class="btn btn-outline" style="padding: 4px 8px; font-size: 12px; color: var(--danger); border-color: var(--danger);">Delete</button>
                         </form>
@@ -92,7 +92,7 @@
                 <tr style="border-bottom: 1px solid var(--border-color);">
                     <td style="padding: 12px 8px;"><?= esc($d['name']) ?></td>
                     <td style="padding: 12px 8px; text-align: right;">
-                        <form action="<?= base_url('org/hr/settings/delete_employment_type/'.$d['id']) ?>" method="POST" onsubmit="return confirm('Delete type?');">
+                        <form action="<?= base_url('org/hr/settings/delete_employment_type/' . ($d['uuid'] ?? $d['id'])) ?>" method="POST" onsubmit="return confirm('Delete type?');">
                             <?= csrf_field() ?>
                             <button class="btn btn-outline" style="padding: 4px 8px; font-size: 12px; color: var(--danger); border-color: var(--danger);">Delete</button>
                         </form>
@@ -137,7 +137,7 @@
                     <td style="padding: 12px 8px;"><?= esc($lp['leave_type']) ?></td>
                     <td style="padding: 12px 8px; text-align: center; font-weight: bold;"><?= esc($lp['annual_quota']) ?></td>
                     <td style="padding: 12px 8px; text-align: right;">
-                        <form action="<?= base_url('org/hr/settings/delete_leave_policy/'.$lp['id']) ?>" method="POST" onsubmit="return confirm('Delete policy?');">
+                        <form action="<?= base_url('org/hr/settings/delete_leave_policy/' . ($lp['uuid'] ?? $lp['id'])) ?>" method="POST" onsubmit="return confirm('Delete policy?');">
                             <?= csrf_field() ?>
                             <button class="btn btn-outline" style="padding: 4px 8px; font-size: 12px; color: var(--danger); border-color: var(--danger);">Delete</button>
                         </form>

@@ -31,11 +31,11 @@ Studio Builder - <?= esc($course['title']) ?>
 
             <!-- Action Controls -->
             <div class="d-flex align-items-center gap-2 flex-wrap">
-                <a href="<?= base_url('creator/courses/preview/' . $course['id']) ?>" class="btn btn-outline-info rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center gap-2" target="_blank">
+                <a href="<?= base_url('creator/courses/preview/' . ($course['uuid'] ?? $course['id'])) ?>" class="btn btn-outline-info rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center gap-2" target="_blank">
                     <i class="fa-solid fa-eye"></i>
                     <span>Student View</span>
                 </a>
-                <a href="<?= base_url('creator/courses/edit/' . $course['id']) ?>" class="btn btn-outline-secondary rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center gap-2">
+                <a href="<?= base_url('creator/courses/edit/' . ($course['uuid'] ?? $course['id'])) ?>" class="btn btn-outline-secondary rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center gap-2">
                     <i class="fa-solid fa-pen-to-square"></i>
                     <span>Edit Info</span>
                 </a>
@@ -46,8 +46,8 @@ Studio Builder - <?= esc($course['title']) ?>
                 <button type="button" 
                         class="btn <?= $course['status'] === 'published' ? 'btn-success' : 'btn-gradient-primary' ?> rounded-pill px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2"
                         onclick="<?= $course['status'] === 'published' 
-                            ? "showConfirmAction({ title: 'Unpublish Course?', message: 'This will hide the course from students and revert it back to Draft mode.', icon: 'fa-solid fa-eye-slash fa-2x', iconColor: '#D97706', iconBg: 'rgba(217, 119, 6, 0.12)', btnText: 'Unpublish & Make Draft', btnClass: 'btn-warning', actionUrl: '".base_url('creator/courses/togglePublish/' . $course['id'])."'})" 
-                            : "showConfirmAction({ title: 'Publish Course Live?', message: 'This will make your chapters and video lessons immediately available to all enrolled students.', icon: 'fa-solid fa-rocket fa-2x', iconColor: '#16A34A', iconBg: 'rgba(22, 163, 74, 0.12)', btnText: '🚀 Yes, Publish Course', btnClass: 'btn-success', actionUrl: '".base_url('creator/courses/togglePublish/' . $course['id'])."'})" ?>">
+                            ? "showConfirmAction({ title: 'Unpublish Course?', message: 'This will hide the course from students and revert it back to Draft mode.', icon: 'fa-solid fa-eye-slash fa-2x', iconColor: '#D97706', iconBg: 'rgba(217, 119, 6, 0.12)', btnText: 'Unpublish & Make Draft', btnClass: 'btn-warning', actionUrl: '".base_url('creator/courses/togglePublish/' . ($course['uuid'] ?? $course['id']))."'})" 
+                            : "showConfirmAction({ title: 'Publish Course Live?', message: 'This will make your chapters and video lessons immediately available to all enrolled students.', icon: 'fa-solid fa-rocket fa-2x', iconColor: '#16A34A', iconBg: 'rgba(22, 163, 74, 0.12)', btnText: '🚀 Yes, Publish Course', btnClass: 'btn-success', actionUrl: '".base_url('creator/courses/togglePublish/' . ($course['uuid'] ?? $course['id']))."'})" ?>">
                     <i class="fa-solid <?= $course['status'] === 'published' ? 'fa-circle-check' : 'fa-rocket' ?>"></i>
                     <span><?= $course['status'] === 'published' ? 'Live on Portal' : 'Publish Course' ?></span>
                 </button>
@@ -104,7 +104,7 @@ Studio Builder - <?= esc($course['title']) ?>
                                     <i class="fa-solid fa-circle-plus"></i> + Add Video Lesson
                                 </button>
                                 <button type="button" class="btn btn-sm btn-outline-danger rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"
-                                        onclick="showConfirmAction({ title: 'Delete Chapter?', message: 'Are you sure you want to delete chapter &quot;<?= esc($ch['chapter_title'], 'js') ?>&quot; and all of its lessons?', icon: 'fa-solid fa-trash-can fa-2x', iconColor: '#DC2626', iconBg: 'rgba(220, 38, 38, 0.12)', btnText: 'Delete Chapter', btnClass: 'btn-danger', actionUrl: '<?= base_url('creator/courses/deleteChapter/' . $ch['id']) ?>' })" title="Delete Chapter">
+                                        onclick="showConfirmAction({ title: 'Delete Chapter?', message: 'Are you sure you want to delete chapter &quot;<?= esc($ch['chapter_title'], 'js') ?>&quot; and all of its lessons?', icon: 'fa-solid fa-trash-can fa-2x', iconColor: '#DC2626', iconBg: 'rgba(220, 38, 38, 0.12)', btnText: 'Delete Chapter', btnClass: 'btn-danger', actionUrl: '<?= base_url('creator/courses/deleteChapter/' . ($ch['uuid'] ?? $ch['id'])) ?>' })" title="Delete Chapter">
                                     <i class="fa-solid fa-trash" style="font-size: 11px;"></i>
                                 </button>
                             </div>
@@ -151,14 +151,14 @@ Studio Builder - <?= esc($course['title']) ?>
                                                 </div>
 
                                                 <div class="d-flex align-items-center gap-2">
-                                                    <a href="<?= base_url('creator/courses/preview/' . $course['id'] . '?lesson=' . $les['id']) ?>" class="btn btn-sm btn-outline-info rounded-pill px-3 py-1" target="_blank">
+                                                    <a href="<?= base_url('creator/courses/preview/' . ($course['uuid'] ?? $course['id']) . '?lesson=' . ($les['uuid'] ?? $les['id'])) ?>" class="btn btn-sm btn-outline-info rounded-pill px-3 py-1" target="_blank">
                                                         <i class="fa-solid fa-eye me-1"></i> Test Play
                                                     </a>
                                                     <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;" data-bs-toggle="modal" data-bs-target="#editLessonModal_<?= $les['id'] ?>" title="Edit Lesson">
                                                         <i class="fa-solid fa-pen" style="font-size: 11px;"></i>
                                                     </button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;"
-                                                            onclick="showConfirmAction({ title: 'Delete Lesson?', message: 'Are you sure you want to delete lesson &quot;<?= esc($les['lesson_title'], 'js') ?>&quot;?', icon: 'fa-solid fa-trash-can fa-2x', iconColor: '#DC2626', iconBg: 'rgba(220, 38, 38, 0.12)', btnText: 'Delete Lesson', btnClass: 'btn-danger', actionUrl: '<?= base_url('creator/courses/deleteLesson/' . $les['id']) ?>' })" title="Delete Lesson">
+                                                            onclick="showConfirmAction({ title: 'Delete Lesson?', message: 'Are you sure you want to delete lesson &quot;<?= esc($les['lesson_title'], 'js') ?>&quot;?', icon: 'fa-solid fa-trash-can fa-2x', iconColor: '#DC2626', iconBg: 'rgba(220, 38, 38, 0.12)', btnText: 'Delete Lesson', btnClass: 'btn-danger', actionUrl: '<?= base_url('creator/courses/deleteLesson/' . ($les['uuid'] ?? $les['id'])) ?>' })" title="Delete Lesson">
                                                         <i class="fa-solid fa-trash" style="font-size: 11px;"></i>
                                                     </button>
                                                 </div>

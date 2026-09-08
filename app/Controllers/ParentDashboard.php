@@ -113,7 +113,7 @@ class ParentDashboard extends BaseController
         $studentId = $ctx['selected_student_id'];
 
         $records = $db->table('attendance_records ar')
-            ->select('ar.*, ast.session_date, ast.session_time, sub.name as subject_name, sub.code as subject_code')
+            ->select('ar.*, ast.session_date, ast.period_id, sub.name as subject_name, sub.code as subject_code')
             ->join('attendance_sessions ast', 'ast.id = ar.session_id', 'left')
             ->join('subjects sub', 'sub.id = ast.subject_id', 'left')
             ->where('ar.student_id', $studentId)
@@ -144,15 +144,16 @@ class ParentDashboard extends BaseController
         $orgId = session('org_id');
 
         $ctx['ledger'] = $db->table('student_fee_ledger fl')
-            ->select('fl.*, fs.name as structure_name')
+            ->select('fl.*, COALESCE(ft.name, "Tuition & Academic Fees") as structure_name')
             ->join('fee_structures fs', 'fs.id = fl.fee_structure_id', 'left')
+            ->join('fee_types ft', 'ft.id = fs.fee_type_id', 'left')
             ->where('fl.student_id', $studentId)
             ->where('fl.org_id', $orgId)
             ->get()->getResultArray();
 
-        $ctx['payments'] = $db->table('admission_payments')
+        $ctx['payments'] = $db->table('fee_receipts')
+            ->select('id, receipt_no as transaction_reference, mode as payment_method, amount as amount_paid, created_at')
             ->where('student_id', $studentId)
-            ->orWhere('application_id', $ctx['selected_student']['application_id'])
             ->orderBy('id', 'DESC')
             ->get()->getResultArray();
 
@@ -198,7 +199,7 @@ class ParentDashboard extends BaseController
         $cohortId = $ctx['selected_student']['cohort_id'];
 
         $ctx['assignments'] = $db->table('lms_assignments a')
-            ->select('a.*, sub.name as subject_name, sub.code as subject_code, sub_mit.status as submission_status, sub_mit.score, sub_mit.feedback')
+            ->select('a.*, sub.name as subject_name, sub.code as subject_code, sub_mit.status as submission_status, sub_mit.marks_obtained as score, sub_mit.feedback')
             ->join('subjects sub', 'sub.id = a.subject_id', 'left')
             ->join('lms_assignment_submissions sub_mit', 'sub_mit.assignment_id = a.id AND sub_mit.student_id = ' . (int)$studentId, 'left')
             ->where('a.cohort_id', $cohortId)
@@ -216,14 +217,18 @@ class ParentDashboard extends BaseController
 
         $cohortId = $ctx['selected_student']['cohort_id'];
 
-        $schedules = $db->table('timetable_schedules ts')
-            ->select('ts.*, tp.name as period_name, tp.start_time, tp.end_time, sub.name as subject_name, sub.code as subject_code, u.full_name as teacher_name')
-            ->join('timetable_periods tp', 'tp.id = ts.period_id', 'left')
-            ->join('subjects sub', 'sub.id = ts.subject_id', 'left')
-            ->join('org_users u', 'u.id = ts.faculty_id', 'left')
-            ->where('ts.cohort_id', $cohortId)
-            ->orderBy('tp.start_time', 'ASC')
-            ->get()->getResultArray();
+        $schedules = [];
+        if (!empty($cohortId)) {
+            $schedules = $db->table('timetable_entries te')
+                ->select('te.*, tp.period_name as period_name, tp.start_time, tp.end_time, sub.name as subject_name, sub.code as subject_code, u.full_name as teacher_name')
+                ->join('timetable_schedules ts', 'ts.id = te.schedule_id')
+                ->join('timetable_periods tp', 'tp.id = te.period_id', 'left')
+                ->join('subjects sub', 'sub.id = te.subject_id', 'left')
+                ->join('org_users u', 'u.id = te.faculty_user_id', 'left')
+                ->where('ts.cohort_id', $cohortId)
+                ->orderBy('tp.start_time', 'ASC')
+                ->get()->getResultArray();
+        }
 
         $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         $grid = [];

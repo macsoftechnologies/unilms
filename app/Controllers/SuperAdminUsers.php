@@ -70,14 +70,16 @@ class SuperAdminUsers extends BaseController
             return redirect()->back()->with('success', 'Admin user created successfully.');
         } else {
             // Edit
-            $adminModel->update($id, $data);
+            $target = $adminModel->findByIdOrUuid($id);
+            $realId = $target ? $target['id'] : $id;
+            $adminModel->update($realId, $data);
             
             if ($currentAdmin) {
-                $logModel->logAction($currentAdmin['id'], 'Updated Super Admin', "Admin ID: $id");
+                $logModel->logAction($currentAdmin['id'], 'Updated Super Admin', "Admin ID: $realId");
             }
             
             // If they updated their own email, update session
-            if ($currentAdmin && $id == $currentAdmin['id'] && $email !== $currentAdmin['email']) {
+            if ($currentAdmin && $realId == $currentAdmin['id'] && $email !== $currentAdmin['email']) {
                 session()->set('admin_email', $email);
             }
             
@@ -91,16 +93,18 @@ class SuperAdminUsers extends BaseController
         $logModel = new SuperadminActivityLogModel();
         
         $id = $this->request->getPost('admin_id');
+        $target = $adminModel->findByIdOrUuid($id);
+        $realId = $target ? $target['id'] : $id;
         $currentAdmin = $adminModel->where('email', session()->get('admin_email'))->first();
         
-        if ($currentAdmin && $id == $currentAdmin['id']) {
+        if ($currentAdmin && $realId == $currentAdmin['id']) {
             return redirect()->back()->with('error', 'You cannot delete your own account.');
         }
         
-        $adminModel->delete($id);
+        $adminModel->delete($realId);
         
         if ($currentAdmin) {
-            $logModel->logAction($currentAdmin['id'], 'Deleted Super Admin', "Admin ID: $id");
+            $logModel->logAction($currentAdmin['id'], 'Deleted Super Admin', "Admin ID: $realId");
         }
         
         return redirect()->back()->with('success', 'Admin user deleted successfully.');

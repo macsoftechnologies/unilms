@@ -68,15 +68,16 @@ class OrgAssessments extends BaseController
         $cohortModel = new CohortModel();
         $coModel = new CoDefinitionModel();
 
-        $assessment = $assessmentModel->where('org_id', $this->org_id)->find($id);
+        $assessment = $assessmentModel->where('org_id', $this->org_id)->findByIdOrUuid($id);
         if (!$assessment) {
             return redirect()->to('org/assessments')->with('error', 'Assessment not found.');
         }
+        $realId = $assessment['id'];
 
         $subjects = $subjectModel->where('org_id', $this->org_id)->findAll();
         $cohorts = $cohortModel->where('org_id', $this->org_id)->findAll();
         $cos = $coModel->where('org_id', $this->org_id)->where('subject_id', $assessment['subject_id'])->findAll();
-        $questions = $questionModel->where('assessment_id', $id)->orderBy('sort_order', 'ASC')->findAll();
+        $questions = $questionModel->where('assessment_id', $realId)->orderBy('sort_order', 'ASC')->findAll();
 
         return view('org/assessments/create', [
             'subjects' => $subjects,
@@ -179,14 +180,14 @@ class OrgAssessments extends BaseController
                 $questionModel->insert([
                     'assessment_id'     => $assessmentId,
                     'co_id'             => !empty($q['co_id']) ? $q['co_id'] : null,
-                    'timestamp_seconds' => !empty($q['timestamp_seconds']) ? intval($q['timestamp_seconds']) : null,
-                    'question_type'     => $q['question_type'] ?? 'mcq',
-                    'question_text'     => $q['question_text'],
-                    'points'            => $q['points'] ?? 1.00,
-                    'options'           => json_encode($optionsArray),
-                    'correct_option'    => $q['correct_option'] ?? '0',
-                    'explanation'       => $q['explanation'] ?? null,
-                    'sort_order'        => $idx
+                    'assessment_id' => $assessmentId,
+                    'question_text' => $text,
+                    'question_type' => $qTypes[$idx] ?? 'mcq',
+                    'marks' => $qMarks[$idx] ?? 1,
+                    'video_timestamp_seconds' => $qTimestamps[$idx] ?? 0,
+                    'options' => isset($qOptions[$idx]) ? json_encode(array_values(array_filter(explode("\n", $qOptions[$idx])))) : null,
+                    'correct_answer' => $qAnswers[$idx] ?? '',
+                    'sort_order' => $idx + 1
                 ]);
             }
         }
@@ -197,9 +198,9 @@ class OrgAssessments extends BaseController
     public function delete($id)
     {
         $assessmentModel = new AssessmentModel();
-        $assessment = $assessmentModel->where('org_id', $this->org_id)->find($id);
+        $assessment = $assessmentModel->where('org_id', $this->org_id)->findByIdOrUuid($id);
         if ($assessment) {
-            $assessmentModel->delete($id);
+            $assessmentModel->delete($assessment['id']);
         }
         return redirect()->to('org/assessments')->with('success', 'Assessment deleted.');
     }
@@ -207,16 +208,17 @@ class OrgAssessments extends BaseController
     public function submissions($id)
     {
         $assessmentModel = new AssessmentModel();
-        $assessment = $assessmentModel->where('org_id', $this->org_id)->find($id);
+        $assessment = $assessmentModel->where('org_id', $this->org_id)->findByIdOrUuid($id);
         if (!$assessment) {
             return redirect()->to('org/assessments')->with('error', 'Assessment not found.');
         }
+        $realId = $assessment['id'];
 
         $db = \Config\Database::connect();
         $builder = $db->table('lms_assessment_submissions sub');
         $builder->select('sub.*, s.first_name, s.last_name, s.roll_number, s.email');
         $builder->join('students s', 's.id = sub.student_id');
-        $builder->where('sub.assessment_id', $id);
+        $builder->where('sub.assessment_id', $realId);
         $builder->orderBy('sub.submitted_at', 'DESC');
         $submissions = $builder->get()->getResultArray();
 
@@ -232,7 +234,7 @@ class OrgAssessments extends BaseController
         $assessmentModel = new AssessmentModel();
         $studentModel = new StudentModel();
 
-        $submission = $submissionModel->find($submissionId);
+        $submission = $submissionModel->findByIdOrUuid($submissionId);
         if (!$submission) {
             return redirect()->to('org/assessments')->with('error', 'Submission not found.');
         }

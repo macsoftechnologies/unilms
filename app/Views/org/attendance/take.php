@@ -21,7 +21,7 @@
 
 <form action="<?= base_url('org/attendance/save') ?>" method="POST">
     <?= csrf_field() ?>
-    <input type="hidden" name="session_id" value="<?= $session['id'] ?>">
+    <input type="hidden" name="session_id" value="<?= esc($session['uuid'] ?? $session['id']) ?>">
     
     <div class="card" style="margin-bottom: 24px;">
         <div class="form-group" style="margin-bottom: 0;">

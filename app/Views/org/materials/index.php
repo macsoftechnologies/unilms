@@ -65,8 +65,8 @@
                             <a href="<?= esc($m['external_url']) ?>" target="_blank" class="btn btn-outline" style="padding: 4px 10px;" title="Open Link"><i class="fa-solid fa-external-link"></i></a>
                         <?php endif; ?>
                         
-                        <a href="<?= base_url('org/materials/edit/'.$m['id']) ?>" class="btn btn-outline" style="padding: 4px 10px; margin-left: 4px;"><i class="fa-solid fa-pen"></i></a>
-                        <form action="<?= base_url('org/materials/delete/'.$m['id']) ?>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this material?');">
+                        <a href="<?= base_url('org/materials/edit/' . ($m['uuid'] ?? $m['id'])) ?>" class="btn btn-outline" style="padding: 4px 10px; margin-left: 4px;"><i class="fa-solid fa-pen"></i></a>
+                        <form action="<?= base_url('org/materials/delete/' . ($m['uuid'] ?? $m['id'])) ?>" method="POST" style="display:inline;" onsubmit="return confirm('Delete this material?');">
                             <?= csrf_field() ?>
                             <button class="btn btn-outline" style="padding: 4px 10px; color: var(--danger); border-color: rgba(238,93,80,0.2);"><i class="fa-solid fa-trash"></i></button>
                         </form>

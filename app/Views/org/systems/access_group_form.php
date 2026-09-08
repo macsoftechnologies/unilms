@@ -150,7 +150,7 @@
 <form action="<?= base_url('org/systems/access-groups/save') ?>" method="POST">
     <?= csrf_field() ?>
     <?php if($group): ?>
-        <input type="hidden" name="group_id" value="<?= $group['id'] ?>">
+        <input type="hidden" name="group_id" value="<?= $group['uuid'] ?? $group['id'] ?>">
     <?php endif; ?>
     
     <div class="grid-layout">

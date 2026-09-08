@@ -25,7 +25,7 @@
                     <td>
                         <div class="action-buttons">
                             <button class="btn-icon" onclick='editSem(<?= json_encode($sem) ?>)'><i class="fa-solid fa-pen"></i></button>
-                            <a href="<?= base_url('org/academics/semesters/delete/'.$sem['id']) ?>" class="btn-icon text-danger" onclick="return confirm('Are you sure you want to delete this semester? Blocks if subjects exist.')"><i class="fa-solid fa-trash"></i></a>
+                            <a href="<?= base_url('org/academics/semesters/delete/' . ($sem['uuid'] ?? $sem['id'])) ?>" class="btn-icon text-danger" onclick="return confirm('Are you sure you want to delete this semester? Blocks if subjects exist.')"><i class="fa-solid fa-trash"></i></a>
                         </div>
                     </td>
                 </tr>

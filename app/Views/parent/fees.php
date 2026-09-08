@@ -6,7 +6,7 @@
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
     <div style="display: flex; gap: 10px;">
         <?php foreach($students as $s): ?>
-            <a href="<?= base_url('parent/dashboard/select_student/'.$s['id']) ?>" 
+            <a href="<?= base_url('parent/dashboard/select_student/' . ($s['uuid'] ?? $s['id'])) ?>" 
                style="text-decoration: none; padding: 8px 18px; border-radius: 6px; font-weight: 600; font-size: 14px;
                       <?= $s['id'] == $selected_student['id'] ? 'background: var(--primary); color: white;' : 'background: white; color: var(--text-main); border: 1px solid var(--border-color);' ?>">
                 <i class="fa-solid fa-graduation-cap me-1"></i> <?= esc($s['first_name'] . ' ' . $s['last_name']) ?>
@@ -76,7 +76,7 @@
         <tbody>
             <?php if(!empty($payments)): foreach($payments as $pay): ?>
             <tr>
-                <td><strong><?= esc($pay['transaction_reference'] ?: 'REC-' . str_pad($pay['id'], 5, '0', STR_PAD_LEFT)) ?></strong></td>
+                <td><strong><?= esc($pay['transaction_reference'] ?: 'REC-' . strtoupper(substr($pay['uuid'] ?? str_pad($pay['id'], 5, '0', STR_PAD_LEFT), 0, 8))) ?></strong></td>
                 <td><?= esc($pay['payment_method'] ?? 'Online Payment') ?></td>
                 <td style="font-weight: 600; color: #10b981;">₹<?= number_format($pay['amount_paid'], 2) ?></td>
                 <td><?= date('d/m/Y, h:i A', strtotime($pay['created_at'])) ?></td>

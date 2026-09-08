@@ -45,7 +45,7 @@
                         <td><?= date('d/m/Y', strtotime($sch['exam_date'])) ?></td>
                         <td><?= esc($sch['max_marks']) ?> / <?= esc($sch['passing_marks']) ?></td>
                         <td>
-                            <a href="<?= base_url('org/examinations/enter-marks/' . $sch['id']) ?>" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Enter Marks</a>
+                            <a href="<?= base_url('org/examinations/enter-marks/' . ($sch['uuid'] ?? $sch['id'])) ?>" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Enter Marks</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

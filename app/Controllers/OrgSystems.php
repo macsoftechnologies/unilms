@@ -246,7 +246,7 @@ class OrgSystems extends BaseController
         $permModel = new PermissionModel();
         $orgModel = new OrganizationModel();
         
-        $group = $groupModel->find($id);
+        $group = $groupModel->findByIdOrUuid($id);
         if (!$group || $group['org_id'] != session()->get('org_id')) {
             return redirect()->to(base_url('org/systems/access-groups'))->with('error', 'Access Group not found.');
         }
@@ -259,7 +259,7 @@ class OrgSystems extends BaseController
         $db = \Config\Database::connect();
         $assigned = $db->table('access_group_permissions')
             ->select('permission_id')
-            ->where('group_id', $id)
+            ->where('group_id', $group['id'])
             ->get()->getResultArray();
         $data['assigned_perms'] = array_column($assigned, 'permission_id');
         
@@ -270,7 +270,7 @@ class OrgSystems extends BaseController
     {
         $groupModel = new AccessGroupModel();
         $orgId = session()->get('org_id');
-        $groupId = $this->request->getPost('group_id');
+        $groupParam = $this->request->getPost('group_id');
         
         $groupData = [
             'org_id' => $orgId,
@@ -278,10 +278,12 @@ class OrgSystems extends BaseController
             'description' => $this->request->getPost('description'),
         ];
         
-        if (empty($groupId)) {
+        if (empty($groupParam)) {
             $groupModel->insert($groupData);
             $groupId = $groupModel->getInsertID();
         } else {
+            $existing = $groupModel->findByIdOrUuid($groupParam);
+            $groupId = $existing ? $existing['id'] : $groupParam;
             $groupModel->update($groupId, $groupData);
         }
         
@@ -308,7 +310,10 @@ class OrgSystems extends BaseController
     {
         $groupModel = new AccessGroupModel();
         $groupId = $this->request->getPost('group_id');
-        $groupModel->delete($groupId);
+        $existing = $groupModel->findByIdOrUuid($groupId);
+        if ($existing) {
+            $groupModel->delete($existing['id']);
+        }
         return redirect()->back()->with('success', 'Access Group deleted.');
     }
     
