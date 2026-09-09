@@ -32,9 +32,8 @@
                         <span class="badge badge-success">Offer Accepted</span>
                     </td>
                     <td>
-                        <a href="<?= base_url('org/admissions/enrollment/process/' . ($app['uuid'] ?? $app['id'])) ?>" 
-                           class="btn btn-primary btn-sm"
-                           onclick="return confirm('This will generate a Roll Number, Student Profile, and LMS Login credentials. Proceed?')">
+                        <a href="<?= base_url('org/admissions/enrollment/process/' . $app['id']) ?>" 
+                           class="btn btn-primary btn-sm" style="padding: 7px 16px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);">
                            <i class="fa-solid fa-user-check"></i> Enroll Student
                         </a>
                     </td>

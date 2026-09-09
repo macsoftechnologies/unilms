@@ -194,13 +194,32 @@ class OrgAdmissions extends BaseController
         return view('org/admissions/documents', $data);
     }
 
+    public function verify_documents($appId)
+    {
+        $appModel = new ApplicationModel();
+        $logModel = new AdmissionActivityLogModel();
+        $orgId = session('org_id');
+        $app = $appModel->where('org_id', $orgId)->findByIdOrUuid($appId);
+        if (!$app) return redirect()->back()->with('error', 'Application not found.');
+        
+        $appModel->update($app['id'], ['status' => 'Verified']);
+        $logModel->insert([
+            'org_id' => $orgId,
+            'application_id' => $app['id'],
+            'action' => 'Documents Verified',
+            'description' => 'Mandatory admission documents verified.',
+            'performed_by' => session('org_user_id')
+        ]);
+        return redirect()->to('org/admissions/documents')->with('success', 'Documents verified for ' . esc($app['full_name']));
+    }
+
     public function offers()
     {
         $offerModel = new AdmissionOfferModel();
         $appModel = new ApplicationModel();
         
         $data['offers'] = $offerModel->getOffers(session('org_id'));
-        $data['applications'] = $appModel->where('org_id', session('org_id'))->where('status', 'Verified')->findAll();
+        $data['applications'] = $appModel->where('org_id', session('org_id'))->whereIn('status', ['Verified', 'Submitted'])->findAll();
         
         return view('org/admissions/offers', $data);
     }
@@ -245,12 +264,106 @@ class OrgAdmissions extends BaseController
         return redirect()->to('org/admissions/offers')->with('success', 'Offer generated successfully.');
     }
 
+    public function accept_offer($offerId)
+    {
+        $offerModel = new AdmissionOfferModel();
+        $logModel = new AdmissionActivityLogModel();
+        $orgId = session('org_id');
+        $offer = $offerModel->where('org_id', $orgId)->findByIdOrUuid($offerId);
+        if (!$offer) return redirect()->back()->with('error', 'Offer not found.');
+
+        $offerModel->update($offer['id'], ['status' => 'Accepted']);
+        $logModel->insert([
+            'org_id' => $orgId,
+            'application_id' => $offer['application_id'],
+            'action' => 'Offer Accepted',
+            'description' => 'Admission offer accepted by applicant/admin.',
+            'performed_by' => session('org_user_id')
+        ]);
+        return redirect()->to('org/admissions/offers')->with('success', 'Offer marked as accepted! Application is now eligible for final enrollment.');
+    }
+
+    public function offer_pdf($offerId)
+    {
+        $orgId = session('org_id');
+        $db = \Config\Database::connect();
+        
+        $builder = $db->table('admission_offers o')
+            ->select('o.*, a.adm_number, a.full_name, a.email, a.phone, a.admission_category, a.program_name, org.name as org_name, org.code as institution_code')
+            ->join('applications a', 'a.id = o.application_id', 'left')
+            ->join('organizations org', 'org.id = o.org_id', 'left')
+            ->where('o.org_id', $orgId);
+
+        if (is_uuid($offerId)) {
+            $builder->where('o.uuid', $offerId);
+        } else {
+            $builder->where('o.id', $offerId);
+        }
+
+        $offer = $builder->get()->getRowArray();
+        if (!$offer) return redirect()->to('org/admissions/offers')->with('error', 'Offer letter not found.');
+
+        // Printable / PDF View
+        return view('org/admissions/offer_letter_pdf', ['offer' => $offer]);
+    }
+
     public function payments()
     {
         $paymentModel = new AdmissionPaymentModel();
+        $offerModel = new AdmissionOfferModel();
         $data['payments'] = $paymentModel->getPayments(session('org_id'));
+        $data['offers'] = $offerModel->getOffers(session('org_id'));
         
         return view('org/admissions/payments', $data);
+    }
+
+    public function save_payment()
+    {
+        $orgId = session('org_id');
+        $paymentModel = new AdmissionPaymentModel();
+        $offerModel = new AdmissionOfferModel();
+        $logModel = new AdmissionActivityLogModel();
+
+        $offerId = $this->request->getPost('offer_id');
+        $amount = (float)$this->request->getPost('amount');
+        $mode = $this->request->getPost('payment_mode') ?: 'Cash';
+        $ref = $this->request->getPost('gateway_reference') ?: 'MANUAL-' . strtoupper(substr(uniqid(), -6));
+
+        $offer = $offerModel->where('org_id', $orgId)->find($offerId);
+        if (!$offer) {
+            return redirect()->back()->with('error', 'Please select a valid admission offer.');
+        }
+
+        // Generate Receipt No.
+        $count = $paymentModel->where('org_id', $orgId)->countAllResults() + 1;
+        $receiptNumber = 'REC-' . date('Y') . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+
+        $paymentModel->insert([
+            'org_id' => $orgId,
+            'offer_id' => $offerId,
+            'amount' => $amount,
+            'payment_status' => 'Paid',
+            'payment_mode' => $mode,
+            'gateway' => 'Manual Office Receipt',
+            'gateway_reference' => $ref,
+            'receipt_number' => $receiptNumber,
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+
+        // Auto-accept offer if still pending
+        if ($offer['status'] === 'Pending') {
+            $offerModel->update($offerId, ['status' => 'Accepted']);
+        }
+
+        $logModel->insert([
+            'org_id' => $orgId,
+            'application_id' => $offer['application_id'],
+            'action' => 'Payment Recorded',
+            'description' => 'Manual payment of ₹' . number_format($amount, 2) . ' received via ' . $mode . '. Receipt: ' . $receiptNumber,
+            'performed_by' => session('org_user_id')
+        ]);
+
+        return redirect()->to('org/admissions/payments')->with('success', 'Payment recorded successfully! Receipt generated: ' . $receiptNumber);
     }
 
     public function enrollment()
@@ -275,36 +388,56 @@ class OrgAdmissions extends BaseController
         $logModel = new AdmissionActivityLogModel();
         $orgId = session('org_id');
 
-        $app = $appModel->where('org_id', $orgId)->findByIdOrUuid($appId);
+        $app = null;
+        if (is_uuid($appId)) {
+            $app = $appModel->where('org_id', $orgId)->where('uuid', $appId)->first();
+        }
+        if (!$app) {
+            $app = $appModel->where('org_id', $orgId)->find($appId);
+        }
         if (!$app) return redirect()->back()->with('error', 'Application not found.');
         $realAppId = $app['id'];
 
-        // 1. Create org_user for the student (Unified Auth)
-        $userId = $userModel->insert([
-            'org_id' => $orgId,
-            'full_name' => $app['full_name'],
-            'email' => $app['email'],
-            'phone' => $app['phone'],
-            'password_hash' => password_hash('welcome123', PASSWORD_DEFAULT),
-            'user_type' => 'student',
-            'role' => 'STUDENT',
-            'is_org_admin' => 0
-        ]);
+        // 1. Check or Create org_user for the student (Unified Auth)
+        $existingUser = $userModel->where('org_id', $orgId)->where('email', $app['email'])->first();
+        if ($existingUser) {
+            $userId = $existingUser['id'];
+        } else {
+            $userId = $userModel->insert([
+                'org_id' => $orgId,
+                'full_name' => $app['full_name'],
+                'email' => $app['email'],
+                'phone' => $app['phone'],
+                'password_hash' => password_hash('welcome123', PASSWORD_DEFAULT),
+                'user_type' => 'student',
+                'role' => 'STUDENT',
+                'is_org_admin' => 0
+            ]);
+        }
 
         // 2. Generate Roll Number
         $year = date('Y');
         $count = $studentModel->where('org_id', $orgId)->countAllResults() + 1;
         $rollNumber = 'STU-' . $year . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
 
-        // 3. Create Student Domain Record
+        // 3. Create Student Domain Record with cohort assignment
         $nameParts = explode(' ', $app['full_name'], 2);
         $firstName = $nameParts[0];
         $lastName = isset($nameParts[1]) ? $nameParts[1] : '';
+
+        // Find matching cohort for the program
+        $cohortModel = new \App\Models\CohortModel();
+        $cohort = null;
+        if (!empty($app['program_id'])) {
+            $cohort = $cohortModel->where('org_id', $orgId)->where('program_id', $app['program_id'])->first();
+        }
+        $cohortId = $cohort ? $cohort['id'] : null;
 
         $studentModel->insert([
             'org_id' => $orgId,
             'user_id' => $userId,
             'application_id' => $realAppId,
+            'cohort_id' => $cohortId,
             'roll_number' => $rollNumber,
             'first_name' => $firstName,
             'last_name' => $lastName,

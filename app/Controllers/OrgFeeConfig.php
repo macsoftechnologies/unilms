@@ -291,6 +291,7 @@ class OrgFeeConfig extends BaseController
 
                         $db = \Config\Database::connect();
                         $students = $db->table('students s')
+                                       ->select('s.id, s.first_name, s.last_name, s.roll_number')
                                        ->join('cohorts c', 'c.id = s.cohort_id')
                                        ->where('s.org_id', $orgId)
                                        ->where('c.program_id', $program_id)
@@ -336,6 +337,7 @@ class OrgFeeConfig extends BaseController
             
             $db = \Config\Database::connect();
             $students = $db->table('students s')
+                           ->select('s.id, s.first_name, s.last_name, s.roll_number')
                            ->join('cohorts c', 'c.id = s.cohort_id')
                            ->where('s.org_id', $orgId)
                            ->where('c.program_id', $data['program_id'])

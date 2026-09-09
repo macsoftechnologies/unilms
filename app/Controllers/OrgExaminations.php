@@ -104,7 +104,34 @@ class OrgExaminations extends BaseController
         $builder->where('ea.org_id', session('org_id'));
         
         $data['applications'] = $builder->get()->getResultArray();
+        $data['exams'] = $db->table('exam_names')->where('org_id', session('org_id'))->get()->getResultArray();
+        $data['students'] = $db->table('students')->where('org_id', session('org_id'))->get()->getResultArray();
         return view('org/examinations/applications', $data);
+    }
+
+    public function save_application()
+    {
+        $appModel = new ExamApplicationModel();
+        $orgId = session('org_id');
+        $studentId = $this->request->getPost('student_id');
+        $examId = $this->request->getPost('exam_id');
+        $status = $this->request->getPost('status') ?: 'Approved';
+        $feePaid = $this->request->getPost('fee_paid') ? 1 : 0;
+
+        $existing = $appModel->where('org_id', $orgId)->where('student_id', $studentId)->where('exam_id', $examId)->first();
+        if ($existing) {
+            $appModel->update($existing['id'], ['status' => $status, 'fee_paid' => $feePaid]);
+        } else {
+            $appModel->insert([
+                'org_id' => $orgId,
+                'student_id' => $studentId,
+                'exam_id' => $examId,
+                'status' => $status,
+                'fee_paid' => $feePaid
+            ]);
+        }
+
+        return redirect()->to('org/examinations/applications')->with('success', 'Exam application registered successfully.');
     }
 
     public function update_application_status($id)

@@ -67,11 +67,15 @@
                     <label>Faculty Member <span class="text-danger">*</span></label>
                     <select name="faculty_user_id" class="form-control" required>
                         <option value="">-- Select Faculty Member --</option>
-                        <?php foreach($faculties as $f): ?>
-                            <option value="<?= $f['user_id'] ?>">
-                                <?= esc($f['full_name']) ?> <?= !empty($f['employee_code']) ? '(' . esc($f['employee_code']) . ')' : (!empty($f['designation']) ? '— ' . esc($f['designation']) : '') ?>
-                            </option>
-                        <?php endforeach; ?>
+                        <?php if(!empty($faculties)): ?>
+                            <?php foreach($faculties as $f): ?>
+                                <option value="<?= $f['user_id'] ?>">
+                                    <?= esc($f['full_name']) ?> <?= !empty($f['employee_code']) ? '(' . esc($f['employee_code']) . ')' : (!empty($f['designation']) ? '— ' . esc($f['designation']) : '') ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <option value="" disabled>⚠️ No faculty onboarded yet (Create faculty under Staff / HR)</option>
+                        <?php endif; ?>
                     </select>
                 </div>
                 <div class="form-group">

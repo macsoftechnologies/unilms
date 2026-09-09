@@ -94,12 +94,29 @@ class OrgFaculty extends BaseController
             
             $allocations = $allocModel->getAllocations($orgId);
             
-            // Fetch all staff / faculty users directly from org_users using exact schema columns
-            $faculties = $db->table('org_users')
+            // Fetch genuine faculty members (strictly non-admin, non-student, non-parent)
+            $roleFaculties = $db->table('org_users')
                 ->select('org_users.id as user_id, org_users.full_name, org_users.email, org_users.designation, org_users.employee_code')
                 ->where('org_users.org_id', $orgId)
+                ->where('org_users.is_org_admin', 0)
+                ->whereIn('org_users.role', ['faculty', 'teacher'])
+                ->where('org_users.user_type', 'staff')
                 ->orderBy('org_users.full_name', 'ASC')
                 ->get()->getResultArray();
+
+            $profileFaculties = $db->table('faculty_profiles')
+                ->select('org_users.id as user_id, org_users.full_name, org_users.email, org_users.designation, org_users.employee_code')
+                ->join('org_users', 'org_users.id = faculty_profiles.user_id')
+                ->where('faculty_profiles.org_id', $orgId)
+                ->where('org_users.is_org_admin', 0)
+                ->orderBy('org_users.full_name', 'ASC')
+                ->get()->getResultArray();
+
+            $facultyMap = [];
+            foreach (array_merge($roleFaculties, $profileFaculties) as $f) {
+                $facultyMap[$f['user_id']] = $f;
+            }
+            $faculties = array_values($facultyMap);
 
             $subjects = (new SubjectModel())->where('org_id', $orgId)->orderBy('code', 'ASC')->findAll();
             $cohorts = (new CohortModel())->where('org_id', $orgId)->orderBy('name', 'ASC')->findAll();

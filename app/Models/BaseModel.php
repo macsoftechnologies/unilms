@@ -62,10 +62,10 @@ class BaseModel extends Model
      */
     public function findByIdOrUuid($identifier)
     {
-        if (!is_uuid($identifier)) {
-            return null;
+        if (is_uuid($identifier)) {
+            return $this->where($this->table . '.uuid', $identifier)->first();
         }
-        return $this->where($this->table . '.uuid', $identifier)->first();
+        return $this->find($identifier);
     }
 
     protected function setCreatedBy(array $data)

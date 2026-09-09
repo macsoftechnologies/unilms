@@ -35,8 +35,10 @@
                         </span>
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-outline"><i class="fa-solid fa-download"></i> PDF</button>
-                        <!-- In reality, accepting an offer might happen via applicant portal or manually here -->
+                        <a href="<?= base_url('org/admissions/offers/pdf/' . ($offer['uuid'] ?? $offer['id'])) ?>" target="_blank" class="btn btn-sm btn-outline"><i class="fa-solid fa-file-pdf text-danger"></i> PDF</a>
+                        <?php if($offer['status'] === 'Pending'): ?>
+                            <a href="<?= base_url('org/admissions/offers/accept/' . ($offer['uuid'] ?? $offer['id'])) ?>" class="btn btn-sm btn-success" style="padding: 4px 10px; font-size: 11px; margin-left: 4px;"><i class="fa-solid fa-check"></i> Accept Offer</a>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; else: ?>

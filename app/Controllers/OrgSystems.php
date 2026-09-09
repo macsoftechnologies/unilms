@@ -119,6 +119,8 @@ class OrgSystems extends BaseController
             'full_name' => $this->request->getPost('full_name'),
             'phone' => $this->request->getPost('phone'),
             'designation' => $this->request->getPost('designation'),
+            'user_type' => 'staff',
+            'role' => $this->request->getPost('role') ?: 'faculty',
         ];
 
         if (!empty($employeeCode)) {

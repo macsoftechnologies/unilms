@@ -27,10 +27,18 @@
                     <td>3 (Demo)</td>
                     <td>0 / 3</td>
                     <td>
-                        <span class="badge badge-warning">Pending Verification</span>
+                        <?php if($app['status'] === 'Verified' || $app['status'] === 'Offer Made' || $app['status'] === 'Enrolled'): ?>
+                            <span class="badge badge-success">Verified</span>
+                        <?php else: ?>
+                            <span class="badge badge-warning">Pending Verification</span>
+                        <?php endif; ?>
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-primary">Review Docs</button>
+                        <?php if($app['status'] === 'Submitted'): ?>
+                            <a href="<?= base_url('org/admissions/documents/verify/' . ($app['uuid'] ?? $app['id'])) ?>" class="btn btn-sm btn-success" style="padding: 5px 12px; font-size: 12px;"><i class="fa-solid fa-check"></i> Approve & Verify</a>
+                        <?php else: ?>
+                            <span style="color: var(--text-muted); font-size: 12px;"><i class="fa-solid fa-check-double text-success"></i> Approved</span>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; else: ?>
